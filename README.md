@@ -15,7 +15,7 @@ const cached_forever = cache(p);
 const cached_by_5_mins = cache({type:"time", ms:5*60*1000}, p)
 
 const cached_by_5_mins_showing_loader_on_slow_requests = cache(
-  "forever", 
+  {type:"time", ms:5*60*1000}, 
   {tardy : show_loader}, // will call this handler in 1 second 
                          //(if Promise was not resolved earlier)
   p
