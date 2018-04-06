@@ -2,7 +2,7 @@
 
 Caches promises or memoizes functions (with persistance and defferent cache invalidation strategies and loader ability)
 
-## Example
+## Example (and loader)
 
 ```js
 const {cache} = require('promise-cache-decorator');
@@ -48,4 +48,25 @@ init().then(()=>{
   //2. you can do all things from previous example
   //3. call save() every time promise resolves
 })
+```
+
+## Cache invalidation
+
+There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example).
+But you can add your own strategy
+
+```js
+const {cache, register_validator} = require('promise-cache-decorator');
+const axios = require('axios');
+
+register_validator("always-miss", function invalid(item, opt){
+               // 'item' is cache item (like {value:3, ts:1523047229332})
+               // 'opt' is second parameter in cache call (see example with 'tardy' handler)
+  return true; // 'true' mean that cahce item is invalid
+});
+
+const p = axios.get('http://api.openweathermap.org/data/2.5/find?q=Moscow');
+
+const cached_never = cache("always-miss", p);
+
 ```
