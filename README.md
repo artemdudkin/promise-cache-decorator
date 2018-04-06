@@ -61,7 +61,7 @@ const axios = require('axios');
 
 register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
-               // 'opt' is second parameter in cache call (see example with 'tardy' handler)
+               // 'opt' is (optional) second parameter in cache call (see example with 'tardy' handler)
   return true; // 'true' mean that cahce item is invalid
 });
 
