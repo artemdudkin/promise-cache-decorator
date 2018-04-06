@@ -10,11 +10,11 @@ const axios = require('axios');
 
 const p = axios.get('http://api.openweathermap.org/data/2.5/find?q=Moscow');
 
-const cached_forever_p = cache(p);
+const cached_forever = cache(p);
 
-const cached_by_5_mins_p = cache({type:"time", ms:5*60*1000}, p)
+const cached_by_5_mins = cache({type:"time", ms:5*60*1000}, p)
 
-const cached_p_showing_loader_on_slow_requests = cache(
+const cached_showing_loader_on_slow_requests = cache(
   {type:"time", ms:5*60*1000}, 
   {tardy : show_loader}
   p
@@ -23,7 +23,7 @@ const cached_p_showing_loader_on_slow_requests = cache(
 //will request the weather from openweathermap (with loader if needed) for the first time,
 //but will get data from cache for the second time (nevertheless after 5 mins will send request to update data)
 
-cached_p_showing_loader_on_slow_requests
+cached_showing_loader_on_slow_requests
 .then(res => {
   show_the_weather(res);
 })
