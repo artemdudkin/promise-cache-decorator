@@ -1,6 +1,6 @@
 # promise-cache-decorator
 
-Caches promises or memoizes functions (with persistance and defferent cache invalidation strategies)
+Caches promises or memoizes functions (with persistance and defferent cache invalidation strategies and loader ability)
 
 ## Example
 
