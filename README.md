@@ -20,6 +20,9 @@ const cached_p_showing_loader_on_slow_requests = cache(
   p
 )
 
+//will request the weather from openweathermap (with loader if needed) for the first time,
+//but will get data from cache for the second time (nevertheless after 5 mins will send request to update data)
+
 cached_p_showing_loader_on_slow_requests
 .then(res => {
   show_the_weather(res);
