@@ -2,10 +2,10 @@
   "author": "Artem Dudkin <sheeva@list.ru>",
   "name": "promise-cache-decorator",
   "license": "MIT",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "repository": {
     "type": "git",
-    "url": "git@github.com:artemdudkin/json-q.git"
+    "url": "git@github.com:artemdudkin/promise-cache-decorator.git"
   },
   "main": "index.js",
   "scripts": {
