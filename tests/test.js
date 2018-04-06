@@ -1,5 +1,5 @@
 const assert = require("assert");
-const {cache, init, set_load_all, set_save, invalidate_all, register_validator} = require("./cache");
+const {cache, init, set_load_all, set_save, invalidate_all, register_validator} = require("../index");
 
 
 var p = (data) => {
