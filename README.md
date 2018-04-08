@@ -37,7 +37,7 @@ cached_by_5_mins_showing_loader_on_slow_requests
 
 ## Persistance
 
-Implemented only React-Native AsyncStorage this time.
+Implemented only React-Native AsyncStorage by now.
 
 ```js
 const {cache, init, set_save, set_load_all} = require('promise-cache-decorator');
