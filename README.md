@@ -35,7 +35,7 @@ cached_by_5_mins_showing_loader_on_slow_requests
 
 ## Persistance
 
-Implemented onle React-Native AsyncStorage this time.
+Implemented only React-Native AsyncStorage this time.
 
 ```js
 const {cache, init, set_save, set_load_all} = require('promise-cache-decorator');
@@ -53,7 +53,7 @@ init().then(()=>{
 
 ## Cache invalidation
 
-There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example).
+There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example above).
 But you can add your own strategy
 
 ```js
