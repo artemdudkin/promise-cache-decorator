@@ -21,8 +21,10 @@ const cached_by_5_mins_showing_loader_on_slow_requests = cache(
   p
 )
 
-//will request the weather from openweathermap (with loader if needed) for the first time,
-//but will get data from cache for the second time (nevertheless after 5 mins will send request to update data)
+//will request the weather from openweathermap 
+//(with loader if needed) for the first time,
+//but will get data from cache for the second time 
+//(nevertheless after 5 mins will send request to update data)
 
 cached_by_5_mins_showing_loader_on_slow_requests
 .then(res => {
@@ -62,7 +64,8 @@ const axios = require('axios');
 
 register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
-               // 'opt' is (optional) second parameter in cache call (see example with 'tardy' handler)
+               // 'opt' is (optional) second parameter in cache call 
+               // (see example with 'tardy' handler)
   return true; // 'true' mean that cahce item is invalid
 });
 
