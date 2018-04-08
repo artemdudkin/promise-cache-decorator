@@ -1,2 +1,4 @@
 Add tests and examples for ES6 syntaxis
-Add localStorage
+Add localStorage 
+Add lowdb
+Add tests for persistance adapters
