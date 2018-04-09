@@ -53,7 +53,7 @@ Implemented only React-Native AsyncStorage by now.
 
 ```js
 const {cache, init, set_save, set_load_all} = require('promise-cache-decorator');
-const {save, load_all} = require('promise-cache-decorator/AsyncStorage');
+const {save, load_all} = require('promise-cache-decorator/asyncStorage');
 
 set_save(save);
 set_load_all(load_all);
@@ -68,7 +68,7 @@ init().then(()=>{
 ## Cache invalidation
 
 There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example above).
-But you can add your own strategy
+But you can add your own strategy:
 
 ```js
 const {cache, register_validator} = require('promise-cache-decorator');
