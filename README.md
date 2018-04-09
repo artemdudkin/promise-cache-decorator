@@ -63,6 +63,7 @@ init().then(()=>{
   //2. you can do all things from previous example
   //3. call save() every time promise resolves
 })
+
 ```
 
 ## Cache invalidation
