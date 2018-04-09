@@ -8,25 +8,24 @@ Caches promises or memoizes functions (with persistance and defferent cache inva
 const {cache} = require('promise-cache-decorator');
 const axios = require('axios');
 
-const p = axios.get('http://api.openweathermap.org/data/2.5/find?q=Moscow');
+const p = (url) => axios.get(url);
 
-const cached_forever = cache(p);
+const cached_forever = cache()(p);
 
-const cached_by_5_mins = cache({type:"time", ms:5*60*1000}, p)
+const cached_by_5_mins = cache({type:"time", ms:5*60*1000})(p)
 
 const cached_by_5_mins_showing_loader_on_slow_requests = cache(
   {type:"time", ms:5*60*1000}, 
-  {tardy : show_loader}, // will call this handler in 1 second 
+  {tardy : show_loader} // will call this handler in 1 second 
                          //(if Promise was not resolved earlier)
-  p
-)
+)(p);
 
 //will request the weather from openweathermap 
 //(with loader if needed) for the first time,
 //but will get data from cache for the second time 
 //(nevertheless after 5 mins will send request to update data)
 
-cached_by_5_mins_showing_loader_on_slow_requests
+cached_by_5_mins_showing_loader_on_slow_requests('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215')
 .then(res => {
   show_the_weather(res);
 })
@@ -69,8 +68,8 @@ register_validator("always-miss", function invalid(item, opt){
   return true; // 'true' mean that cache item is invalid
 });
 
-const p = axios.get('http://api.openweathermap.org/data/2.5/find?q=Moscow');
+const p = (url) => axios.get(url);
 
-const cached_never = cache("always-miss", p);
+const cached_never = cache("always-miss")(p);
 
 ```

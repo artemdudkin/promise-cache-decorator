@@ -43,7 +43,7 @@ describe('cache', function(){
             fired=true;
             return a+b
         }
-        var ff = cache("forever", f);
+        var ff = cache("forever")(f);
 
         var actual;
         actual = ff(1, 2);
@@ -59,7 +59,7 @@ describe('cache', function(){
 
     it('should miss and hit on cached forever (promise)', (done)=> {
         invalidate_all();
-        var pp = cache("forever", p);
+        var pp = cache("forever")(p);
 
         var start = Date.now();
 
@@ -81,8 +81,8 @@ describe('cache', function(){
 
     it('should miss and miss with cache ttl 1s (on 2s pause)', (done)=> {
         invalidate_all();
-        var pp = cache("forever", p);
-        var ppp = cache({type:"time", ms:1000}, p);
+        var pp = cache("forever")(p);
+        var ppp = cache({type:"time", ms:1000})(p);
 
         var start = Date.now();        
         pp({a:1,b:2})
@@ -104,11 +104,10 @@ describe('cache', function(){
     
     it('should miss and hit with cache ttl 5s (on 2s pause)', (done)=> {
         invalidate_all();
-        var pp = cache(p);
-        var ppp = cache({type:"time", ms:5000}, p);
+        var pp = cache()(p);
+        var ppp = cache({type:"time", ms:5000})(p);
 
         var start = Date.now();
-
         pp({a:1,b:2})
         .then(res=>{
             let delta = Date.now() - start;
@@ -131,7 +130,7 @@ describe('cache', function(){
             return true;
         });
 
-        var pp = cache("always-miss", p);
+        var pp = cache("always-miss")(p);
 
         var start = Date.now();
 
@@ -160,9 +159,8 @@ describe('cache', function(){
                 let delta = Date.now() - start;
                 assert.ok( delta > 900 && delta < 1500, "'tardy' should be fired in 1s while it is " + delta);
                 fired=true;
-            }},
-            p
-        );
+            }}
+        )(p);
 
         var start = Date.now();
 
@@ -170,6 +168,19 @@ describe('cache', function(){
         .then(res=>{
             let delta = Date.now() - start;
             assert.ok(fired, "'tardy' should be fired");
+        }).then(res=>{
+            fired=false;
+            return pp({a:1,b:2})
+        }).then(res=>{
+            assert.ok(!fired, "'tardy' should not be fired second time");
+        }).then(res=>{
+            invalidate_all();
+
+            start = Date.now();
+            fired=false;
+            return pp({a:1,b:2})
+        }).then(res=>{
+            assert.ok(fired, "'tardy' should be fired after cache invalidation");
             done();
         }).catch(err=>{
             done(new Error(err));
@@ -192,9 +203,8 @@ describe('cache', function(){
         var pp = cache({
             tardy:()=>{
                 fired=true;
-            }},
-            p
-        );
+            }}
+        )(p);
 
         var start = Date.now();
 
@@ -215,7 +225,7 @@ describe('cache', function(){
             return Promise.resolve(o);
         });
 
-        var pp = cache("forever", p);
+        var pp = cache("forever")(p);
         
         init().then(()=>{
             var start = Date.now();
@@ -241,7 +251,7 @@ describe('cache', function(){
             return Promise.resolve(o);
         });
 
-        var pp = cache({type:"time", ms:1000}, p);
+        var pp = cache({type:"time", ms:1000})(p);
 
         init().then(()=>{
             var start = Date.now();
@@ -272,7 +282,7 @@ describe('cache', function(){
                 fired = true;
                 return a+b
             }
-            var ff = cache({type:"time", ms:1000}, f);
+            var ff = cache({type:"time", ms:1000})(f);
 
             var actual = ff(1,2);
 
@@ -293,7 +303,7 @@ describe('cache', function(){
                 fired = true;
                 return a+b
             }
-            var ff = cache({type:"time", ms:1000}, f);
+            var ff = cache({type:"time", ms:1000})(f);
 
             var actual = ff(1,2);
 
@@ -312,7 +322,7 @@ describe('cache', function(){
             _fired = true;
         });
 
-        var pp = cache("forever", p);
+        var pp = cache("forever")(p);
 
         init().then(()=>{
             var start = Date.now();
@@ -336,7 +346,7 @@ describe('cache', function(){
         var f = function(a, b){
             return a+b
         }
-        var ff = cache("forever", f);
+        var ff = cache("forever")(f);
 
         var _id;
         var _value;

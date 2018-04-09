@@ -20,7 +20,9 @@
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "circular-json": "^0.5.1"
+  },
   "keywords": [
     "cache",
     "memoize",

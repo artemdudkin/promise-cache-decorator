@@ -1,3 +1,4 @@
+const CircularJSON = require('circular-json');
 
 const _cached = {}
 
@@ -66,7 +67,7 @@ cacheValidator.time = {
 
 const cache_serialize = function(cache_item){
     if (cache_item.value instanceof Promise) cache_item.vtype = "promise";
-    return JSON.stringify(cache_item);
+    return CircularJSON.stringify(cache_item);
 }
 
 const cache_deserialize = function(str){
@@ -87,39 +88,35 @@ const _getHash = (obj) => {
 
 
 //option.tardy
-function cache(type, options, func) {
-  if (typeof func == 'undefined' && typeof options == 'undefined') {
-    func = type;
-    type = undefined;
-    options = {};
-  } else if (typeof func == 'undefined') {
+function cache(type, options) {
+  return function (func) {
+  
     if (typeof type == 'string' || (typeof type == 'object' && typeof type.type == 'string')) {
-      func = options;
-      options = {};
+      //nop
     } else {
-      func = options;
       options = type;
       type = undefined;
     }
-  }
+    if (typeof options == 'undefined') options = {};
 
-  return function(...rest) {
-    var id = _getHash(rest);
-    var res = cache_get(type, id);
-    if (typeof res == 'undefined') {
-      res = func.apply(this, rest);
-      cache_put(type, id, res);
+    return function (...rest) {
+      var id = _getHash(rest);
+      var res = cache_get(type, id);
+      if (typeof res == 'undefined') {
+        res = func.apply(this, rest);
+        cache_put(type, id, res);
 
-      if (res instanceof Promise && typeof options.tardy == 'function') {
-        res.timer = setTimeout(function(){
-          if (typeof options == 'object') options.tardy();
-        }, 1000);
-        res.then(()=>{
-          clearTimeout(res.timer);
-        })
+        if (res instanceof Promise && typeof options.tardy == 'function') {
+          res.timer = setTimeout(function () {
+            if (typeof options == 'object') options.tardy();
+          }, 1000);
+          res.then(() => {
+            clearTimeout(res.timer);
+          })
+        }
       }
+      return res;
     }
-    return res;
   }
 }
 
