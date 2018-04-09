@@ -58,7 +58,6 @@ But you can add your own strategy
 
 ```js
 const {cache, register_validator} = require('promise-cache-decorator');
-const axios = require('axios');
 
 register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
