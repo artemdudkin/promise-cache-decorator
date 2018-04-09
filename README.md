@@ -68,7 +68,7 @@ init().then(()=>{
 ## Cache invalidation
 
 There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example above).
-But you can add your own strategy
+But you can add your own strategy:
 
 ```js
 const {cache, register_validator} = require('promise-cache-decorator');
