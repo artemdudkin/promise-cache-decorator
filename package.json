@@ -23,11 +23,11 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.1.2",
     "mocha-lcov-reporter": "^1.2.0",
+    "webpack": "^4.5.0",
     "webpack-cli": "^2.0.14"
   },
   "dependencies": {
-    "circular-json": "^0.5.1",
-    "webpack": "^4.5.0"
+    "circular-json": "^0.5.1"
   },
   "keywords": [
     "cache",
