@@ -1,3 +1,4 @@
+fix 'tardy' call
 Add 'tardy' handler timeout setting
 refactoring of persistance adapters
 Add localStorage 
@@ -5,3 +6,4 @@ Add lowdb
 Add tests for persistance adapters
 comment code (index.js)
 replace console.warn with Errors?
+update unit tests to reach 90%
