@@ -53,7 +53,7 @@ Implemented only React-Native AsyncStorage by now.
 
 ```js
 const {cache, init, set_save, set_load_all} = require('promise-cache-decorator');
-const {save, load_all} = require('promise-cache-decorator/AsyncStorage');
+const {save, load_all} = require('promise-cache-decorator/asyncStorage');
 
 set_save(save);
 set_load_all(load_all);
