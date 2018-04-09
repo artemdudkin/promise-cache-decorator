@@ -4,3 +4,4 @@ Add localStorage
 Add lowdb
 Add tests for persistance adapters
 comment code (index.js)
+replace console.warn with Errors?
