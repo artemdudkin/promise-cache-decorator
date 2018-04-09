@@ -1,4 +1,5 @@
 Add tests and examples for ES6 syntaxis
+Add "once-a-day" invalidator
 Add localStorage 
 Add lowdb
 Add tests for persistance adapters
