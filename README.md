@@ -70,7 +70,7 @@ init().then(()=>{
 
 ## Cache invalidation
 
-There are two strategies by default: (1) keep forever and (2) invalidate by timeout (see example above).
+There are three strategies by default: (1) keep forever, (2) invalidate by timeout (see example above) and (3) update 'once-a-day' after given time of day (see tests for example).
 But you can add your own strategy:
 
 ```js

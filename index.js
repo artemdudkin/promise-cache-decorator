@@ -65,6 +65,40 @@ cacheValidator.time = {
   }
 }
 
+cacheValidator['once-a-day'] = {
+  invalid : (item, opt) => {
+    if (typeof opt != 'object' || typeof opt.time != 'string') {
+      console.warn('dayUpdateTime does not exists or not a string');
+      return true;
+    } else {
+      const t = opt.time.split(':');
+      try {
+          const h = t[0] ? parseInt(t[0]) : 0;
+          const m = t[1] ? parseInt(t[1]) : 0;
+          const s = t[2] ? parseInt(t[2]) : 0;
+          if (h < 0 || h> 23) {
+            console.warn('wrong dayUpdateTime hours ['+h+']');
+            return true;
+          }
+          if (m < 0 || m> 59) {
+            console.warn('wrong dayUpdateTime minutes ['+m+']');
+            return true;
+          }
+          if (s < 0 || s> 59) {
+            console.warn('wrong dayUpdateTime seconds ['+s+']');
+            return true;
+          }
+          var dayUpdate = new Date();
+          dayUpdate.setHours(h, m, s, 0);
+          return (dayUpdate.getTime() > item.ts && dayUpdate.getTime() < Date.now());
+      } catch (e) {
+        console.warn('can not parse dayUpdateTime ['+opt.time+']');
+        return true;
+      }
+    }
+  }
+}
+
 const cache_serialize = function(cache_item){
     if (cache_item.value instanceof Promise) cache_item.vtype = "promise";
     return CircularJSON.stringify(cache_item);

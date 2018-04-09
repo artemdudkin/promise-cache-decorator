@@ -124,7 +124,7 @@ describe('vanilla js', function(){
         })
     })
 
-    it('should miss and miss on always-miss-validator', (done)=>{
+    it('should miss and miss on always-miss validator', (done)=>{
         invalidate_all();
         register_validator("always-miss", function invalid(item, opt){
             return true;
@@ -144,6 +144,44 @@ describe('vanilla js', function(){
         }).then(res=>{
             let delta = Date.now() - start;
             assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
+            done();
+        }).catch(err=>{
+            done(new Error(err));
+        })
+    })
+
+    it('should miss and hit and miss on once-a-day validator', (done)=>{
+        invalidate_all();
+
+	var dt = new Date();
+	var dayUpdateTime = dt.getHours() + ":" + dt.getMinutes() + ":" + (dt.getSeconds() + 3); //cache will inavidate in 3 seconds
+        var pp = cache({type:"once-a-day", time:dayUpdateTime})(p);
+
+        var start = Date.now();
+
+        pp({a:1,b:2})
+        .then(res=>{
+            let delta = Date.now() - start;
+            assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
+        }).then(res=>{
+            start = Date.now();
+            return pp({a:1,b:2})
+        }).then(res=>{
+            let delta = Date.now() - start;
+            assert.ok( delta < 100, "cache hit should be less then 100 while it is " + delta);
+            assert.equal( 3, res.sum);
+        }).then(res=>{
+            //wait 3 seconds to cross dayUpdateTime
+            return new Promise(function(resolve){
+                setTimeout(function(){resolve()}, 3000);
+            })
+        }).then(res=>{
+            start = Date.now();
+            return pp({a:1,b:2})
+        })
+        .then(res=>{
+            let delta = Date.now() - start;
+            assert.ok( delta > 1900 && delta < 3000, "cache miss (after dayUpdateTime) should be greater 2000 while it is " + delta);
             done();
         }).catch(err=>{
             done(new Error(err));
