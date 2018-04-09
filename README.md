@@ -33,7 +33,7 @@ cached_by_5_mins_showing_loader_on_slow_requests('http://apidev.accuweather.com/
 })
 ```
 
-#ES6 notation
+## ES6 notation
 ```js
 import {cache} from 'promise-cache-decorator';
 import axios from 'axios';
