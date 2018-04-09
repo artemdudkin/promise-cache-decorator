@@ -11,7 +11,7 @@ var p = (data) => {
     })
 }
 
-describe('cache', function(){
+describe('vanilla js', function(){
     this.timeout(300 * 1000);
 
     it('should miss and miss on uncached (promise)', (done)=> {

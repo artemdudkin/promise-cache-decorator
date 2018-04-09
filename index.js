@@ -89,7 +89,8 @@ const _getHash = (obj) => {
 
 //option.tardy
 function cache(type, options) {
-  return function (func) {
+  return function (func, key, descriptor) {
+    if (key) func = func[key];
   
     if (typeof type == 'string' || (typeof type == 'object' && typeof type.type == 'string')) {
       //nop
@@ -99,7 +100,7 @@ function cache(type, options) {
     }
     if (typeof options == 'undefined') options = {};
 
-    return function (...rest) {
+    const f = function (...rest) {
       var id = _getHash(rest);
       var res = cache_get(type, id);
       if (typeof res == 'undefined') {
@@ -116,6 +117,14 @@ function cache(type, options) {
         }
       }
       return res;
+    }
+
+    if (key) {
+      //ES6 notation
+      descriptor.value = f;
+    } else {
+      //vanilla js notation
+      return f;
     }
   }
 }
