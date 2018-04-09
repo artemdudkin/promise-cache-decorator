@@ -33,6 +33,20 @@ cached_by_5_mins_showing_loader_on_slow_requests('http://apidev.accuweather.com/
 })
 ```
 
+#ES6 notation
+```js
+import {cache} from 'promise-cache-decorator';
+import axios from 'axios';
+
+class API {
+    @cache("forever")
+    getMoscowWeather(){
+        return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
+    }
+}
+```
+
+
 ## Persistance
 
 Implemented only React-Native AsyncStorage by now.
