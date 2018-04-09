@@ -6,9 +6,8 @@ Memoizes async functions (i.e. caches promises), with persistance and defferent 
 
 ```js
 const {cache} = require('promise-cache-decorator');
-const axios = require('axios');
 
-const p = (url) => axios.get(url);
+const p = (url) => require('axios').get(url);
 
 const cached_forever = cache()(p);
 
@@ -59,7 +58,6 @@ But you can add your own strategy
 
 ```js
 const {cache, register_validator} = require('promise-cache-decorator');
-const axios = require('axios');
 
 register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
@@ -68,7 +66,7 @@ register_validator("always-miss", function invalid(item, opt){
   return true; // 'true' mean that cache item is invalid
 });
 
-const p = (url) => axios.get(url);
+const p = (url) => require('axios').get(url);
 
 const cached_never = cache("always-miss")(p);
 
