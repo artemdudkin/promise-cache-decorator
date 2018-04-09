@@ -66,7 +66,7 @@ register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
                // 'opt' is (optional) second parameter in cache call 
                // (see example with 'tardy' handler)
-  return true; // 'true' mean that cahce item is invalid
+  return true; // 'true' mean that cache item is invalid
 });
 
 const p = axios.get('http://api.openweathermap.org/data/2.5/find?q=Moscow');
