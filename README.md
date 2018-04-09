@@ -2,6 +2,8 @@
 
 Memoizes async functions (i.e. caches promises), with persistance and defferent cache invalidation strategies and loader ability
 
+[![Coverage Status](https://coveralls.io/repos/github/artemdudkin/promise-cache-decorator/badge.svg?branch=master)](https://coveralls.io/github/artemdudkin/promise-cache-decorator?branch=master) [![Build Status](https://api.travis-ci.org/artemdudkin/promise-cache-decorator.svg?branch=master)](https://api.travis-ci.org/artemdudkin/promise-cache-decorator.svg?branch=master)
+
 ## Example (and loader)
 
 ```js
