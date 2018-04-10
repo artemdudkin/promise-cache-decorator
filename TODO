@@ -1,5 +1,8 @@
 fix 'tardy' call
 Add 'tardy' handler timeout setting
+
+add sample project
+
 refactoring of persistance adapters
 Add localStorage 
 Add lowdb
