@@ -1,4 +1,4 @@
-tests for Promise.all
+tests the same data @ different cached promises
 
 fix 'tardy' call
 Add 'tardy' handler timeout setting
