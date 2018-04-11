@@ -1,4 +1,5 @@
 tests the same data @ different cached promises
+do not cache rejected promises
 
 fix 'tardy' call
 Add 'tardy' handler timeout setting
