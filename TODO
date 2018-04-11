@@ -1,7 +1,10 @@
-tests the same data @ different cached promises
+two calls should return the same (unresolved)promise
+split validators and add more tests for once-a-day validator
+tests the same input data @ different cached promises (i.e. add 'id' option, random by default)
 do not cache rejected promises
+force update
 
-fix 'tardy' call
+fix 'tardy' call (i.e. test with empty-object-options)
 Add 'tardy' handler timeout setting
 
 add sample project
