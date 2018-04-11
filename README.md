@@ -61,9 +61,9 @@ set_save(save);
 set_load_all(load_all);
 
 init().then(()=>{
-  //1. will load all data from AsyncStorage to cache
+  //1. will load all items from AsyncStorage to cache
   //2. you can do all things from previous example
-  //3. call save() every time promise resolves
+  //3. will call save() on promise resolves (to save item to AsyncStorage)
 })
 
 ```
