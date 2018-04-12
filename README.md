@@ -42,6 +42,7 @@ import {cache} from 'promise-cache-decorator';
 import axios from 'axios';
 
 class API {
+
     @cache({
       type:"once-a-day",
       time:"14:00",
@@ -50,6 +51,7 @@ class API {
     getMoscowWeather(){
       return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
     }
+    
     loader(){
       console.log("loading...");
     }
