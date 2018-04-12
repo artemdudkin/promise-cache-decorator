@@ -4,6 +4,7 @@ tests the same input data @ different cached promises (i.e. add 'id' option, ran
 do not cache rejected promises
 force update
 
+fix once-a-day test failing on 59s on minute
 fix 'tardy' call (i.e. test with empty-object-options)
 Add 'tardy' handler timeout setting
 

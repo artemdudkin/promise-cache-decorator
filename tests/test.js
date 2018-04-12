@@ -117,7 +117,7 @@ describe('vanilla js', function(){
     it('should miss and miss with cache ttl 1s (on 2s pause)', (done)=> {
         invalidate_all();
         var pp = cache("forever")(p);
-        var ppp = cache({type:"time", ms:1000})(p);
+        var ppp = cache({type:"age", maxAge:1000})(p);
 
         var start = Date.now();        
         pp({a:1,b:2})
@@ -140,7 +140,7 @@ describe('vanilla js', function(){
     it('should miss and hit with cache ttl 5s (on 2s pause)', (done)=> {
         invalidate_all();
         var pp = cache()(p);
-        var ppp = cache({type:"time", ms:5000})(p);
+        var ppp = cache({type:"age", maxAge:5000})(p);
 
         var start = Date.now();
         pp({a:1,b:2})
@@ -185,11 +185,50 @@ describe('vanilla js', function(){
         })
     })
 
+    it('should miss and hit and miss on once-a-day validator', (done) => {
+        invalidate_all();
+
+        var dt = new Date();
+        var dayUpdateTime = dt.getHours() + ":" + dt.getMinutes() + ":" + (dt.getSeconds() + 3); //cache will inavidate in 3 seconds
+        var pp = cache({ type: "once-a-day", time: dayUpdateTime })(p);
+
+        var start = Date.now();
+
+        pp({ a: 1, b: 2 })
+            .then(res => {
+                let delta = Date.now() - start;
+                assert.ok(delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
+            }).then(res => {
+                start = Date.now();
+                return pp({ a: 1, b: 2 })
+            }).then(res => {
+                let delta = Date.now() - start;
+                assert.ok(delta < 100, "cache hit should be less then 100 while it is " + delta);
+                assert.equal(3, res.sum);
+            }).then(res => {
+                //wait 3 seconds to cross dayUpdateTime
+                return new Promise(function (resolve) {
+                    setTimeout(function () { resolve() }, 3000);
+                })
+            }).then(res => {
+                start = Date.now();
+                return pp({ a: 1, b: 2 })
+            })
+            .then(res => {
+                let delta = Date.now() - start;
+                assert.ok(delta > 1900 && delta < 3000, "cache miss (after dayUpdateTime) should be greater 2000 while it is " + delta);
+                done();
+            }).catch(err => {
+                done(new Error(err));
+            })
+    })
+
     it("should fire 'tardy' on slow promises", (done)=> {
         invalidate_all();
 
         var fired = false;
-        var pp = cache("forever", {
+        var pp = cache({
+            type : "forever",
             tardy:()=>{
                 let delta = Date.now() - start;
                 assert.ok( delta > 900 && delta < 1500, "'tardy' should be fired in 1s while it is " + delta);
@@ -286,7 +325,7 @@ describe('vanilla js', function(){
             return Promise.resolve(o);
         });
 
-        var pp = cache({type:"time", ms:1000})(p);
+        var pp = cache({type:"age", maxAge:1000})(p);
 
         init().then(()=>{
             var start = Date.now();
@@ -317,7 +356,7 @@ describe('vanilla js', function(){
                 fired = true;
                 return a+b
             }
-            var ff = cache({type:"time", ms:1000})(f);
+            var ff = cache({type:"age", maxAge:1000})(f);
 
             var actual = ff(1,2);
 
@@ -338,7 +377,7 @@ describe('vanilla js', function(){
                 fired = true;
                 return a+b
             }
-            var ff = cache({type:"time", ms:1000})(f);
+            var ff = cache({type:"age", maxAge:1000})(f);
 
             var actual = ff(1,2);
 
