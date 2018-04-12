@@ -197,8 +197,8 @@ describe('vanilla js decorator', function(){
     it('should miss and hit and miss on once-a-day validator', (done) => {
         invalidate_all();
 
-        var dt = new Date();
-        var dayUpdateTime = dt.getHours() + ":" + dt.getMinutes() + ":" + (dt.getSeconds() + 3); //cache will inavidate in 3 seconds
+        var dt = new Date( (new Date()).getTime() + 3000);
+        var dayUpdateTime = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(); //cache will inavidate in 3 seconds
         var pp = cache({ type: "once-a-day", time: dayUpdateTime })(p);
 
         var start = Date.now();
