@@ -27,7 +27,7 @@ class A {
     }
 }
 
-describe('es6', function(){
+describe('es6 decorator', function(){
     this.timeout(300 * 1000);
 
     it('should miss and hit on cached forever (promise)', (done)=> {

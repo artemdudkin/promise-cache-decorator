@@ -1,7 +1,7 @@
 const assert = require("assert");
 const {invalid, parse} = require("../lib/validator/once");
 
-describe('validator', function(){
+describe('once-a-day validator', function(){
 
     it('once-a-day parse() should throw Error on undefined config', ()=> {
         assert.throws( 
@@ -76,14 +76,6 @@ describe('validator', function(){
         assert.throws( 
             ()=>{parse({time:'abc'})}, 
             /^Error: wrong dayUpdateTime hours \[NaN\]$/);
-
-/*        var expected = new Date();
-        expected.setHours(23, 1, 0, 0);
-
-        var actual = parse({time:'abc'});
-
-        console.log(actual);
-        assert.equal(actual.getTime(), expected.getTime());*/
     })    
 
     it('once-a-day parse() should throw Error on m=abc', ()=> {

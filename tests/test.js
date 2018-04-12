@@ -1,5 +1,5 @@
 const assert = require("assert");
-const {cache, init, set_load_all, set_save, invalidate_all, register_validator} = require("../index");
+const {cache, init, set_load, set_save, invalidate_all, register_validator} = require("../index");
 
 
 var p = (data) => {
@@ -11,7 +11,7 @@ var p = (data) => {
     })
 }
 
-describe('vanilla js', function(){
+describe('vanilla js decorator', function(){
     this.timeout(300 * 1000);
 
     it('should miss and miss on uncached (promise)', (done)=> {
@@ -35,29 +35,8 @@ describe('vanilla js', function(){
         })
     })    
 
-    it('should miss and hit on cached forever (function)', ()=> {
-        invalidate_all();
 
-        var fired=false;
-        var f = function(a, b){
-            fired=true;
-            return a+b
-        }
-        var ff = cache("forever")(f);
-
-        var actual;
-        actual = ff(1, 2);
-        assert.equal( 3, actual, "result of the function is 3");
-        assert.equal( true, fired, "function should be fired");
-
-        fired=false;
-        actual = ff(1, 2);
-        assert.equal( 3, actual, "result of the function is 3");
-        assert.equal( false, fired, "function should NOT be fired");
-    })
-    
-
-    it('should miss and hit on cached forever (promise)', (done)=> {
+    it('should miss and hit on cached forever', (done)=> {
         invalidate_all();
         var pp = cache("forever")(p);
 
@@ -78,6 +57,7 @@ describe('vanilla js', function(){
             done(new Error(err));
         })
     })
+
 
     it('should miss and hit on cached forever (promise) @ Promise.all', (done)=> {
         invalidate_all();
@@ -185,6 +165,35 @@ describe('vanilla js', function(){
         })
     })
 
+    it('do not cache rejected promise', (done) => {
+      invalidate_all();
+
+      var fired = false;
+      var p = (data) => {
+        return new Promise((resolve, reject)=>{
+          setTimeout(function(){
+            fired = true;
+            reject("ohh");
+          }, 500);
+        })
+      }
+      var pp = cache({type: "forever"})(p);
+
+      pp({a:10, b:11})
+      .catch(err => {
+        assert.ok( fired, "should call original promise 1st time");
+      })
+      .then(() => {
+        fired = false;
+        return pp({a:10, b:11})
+      })
+      .catch(err => {
+        assert.ok( fired, "should call original promise 2nd time");
+        done();
+      })
+      
+    })
+
     it('should miss and hit and miss on once-a-day validator', (done) => {
         invalidate_all();
 
@@ -260,6 +269,25 @@ describe('vanilla js', function(){
             done(new Error(err));
         })
     })
+
+    it("should not throw error if promise is slow while there is no 'tardy' at option object", (done)=> {
+        invalidate_all();
+
+        var fired = false;
+        var p2 = cache({type : "forever"})(p);
+        var p3 = cache("forever")(p);
+
+        var start = Date.now();
+
+        p2({a:1,b:2})
+        .then(res=>{
+            return p3({a:1,b:2})
+        })
+        .then(()=>{
+            done();
+        })
+        .catch(done);
+    })
     
 
     it("should not fire 'tardy' on fast promises", (done)=> {
@@ -292,101 +320,63 @@ describe('vanilla js', function(){
         })
     })
 
-    it('should hit after cache load (promise)', (done)=>{
-        set_load_all(()=>{
-            var o = {}
-            o[JSON.stringify([{a:1, b:2}])] = JSON.stringify({vtype:"promise", value:{a:1, b:2, sum:3}, ts:Date.now()})
-            return Promise.resolve(o);
+    it('should hit after cache load', (done)=>{
+        invalidate_all();
+
+        set_load((id)=>{
+            let value;
+            if (id === JSON.stringify([{a:1, b:2}])) {
+              value = JSON.stringify({value:{a:1, b:2, sum:3}, ts:Date.now()})
+            }
+            return Promise.resolve(value);
         });
 
         var pp = cache("forever")(p);
         
-        init().then(()=>{
-            var start = Date.now();
+        var start = Date.now();
 
-            pp({a:1,b:2})
-            .then(res=>{
-                let delta = Date.now() - start;
-                assert.ok( delta < 100, "cache hit should <100 while it is " + delta);
-                assert.equal( 3, res.sum);
-                assert.equal( 1, res.a);
-                assert.equal( 2, res.b);
-                done();
-            }).catch(err=>{
-                done(new Error(err));
-            })
+        pp({a:1,b:2})
+        .then(res=>{
+            let delta = Date.now() - start;
+            assert.ok( delta < 100, "cache hit should <100 while it is " + delta);
+            assert.equal( 3, res.sum);
+            assert.equal( 1, res.a);
+            assert.equal( 2, res.b);
+            done();
+        }).catch(err=>{
+            done(new Error(err));
         })
     })
 
-    it('should hit after cache load with old data (promise)', (done)=>{
-        set_load_all(()=>{
-            var o = {}
-            o[JSON.stringify([{a:1, b:2}])] = JSON.stringify({vtype:"promise", value:{a:1, b:2, sum:3}, ts:Date.now()-10000})
-            return Promise.resolve(o);
+    it('should miss after cache load with old data', (done)=>{
+        invalidate_all();
+
+        set_load((id)=>{
+            let value;
+            if (id === JSON.stringify([{a:1, b:2}])) {
+              value = JSON.stringify({value:{a:1, b:2, sum:3}, ts:Date.now() - 10000})
+            }
+            return Promise.resolve(value);
         });
 
         var pp = cache({type:"age", maxAge:1000})(p);
 
-        init().then(()=>{
-            var start = Date.now();
+        var start = Date.now();
 
-            pp({a:1,b:2})
-            .then(res=>{
-                let delta = Date.now() - start;
-                assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
-                assert.equal( 3, res.sum);
-                assert.equal( 1, res.a);
-                assert.equal( 2, res.b);
-                done();
-            }).catch(err=>{
-                done(new Error(err));
-            })
+        pp({a:1,b:2})
+        .then(res=>{
+            let delta = Date.now() - start;
+            assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
+            assert.equal( 3, res.sum);
+            assert.equal( 1, res.a);
+            assert.equal( 2, res.b);
+            done();
+        }).catch(err=>{
+            done(new Error(err));
         })
     })    
 
-    it('should hit after cache load (function)', ()=>{
-        set_load_all(()=>{
-            var o = {}
-            o['[1,2]'] = JSON.stringify({value:3, ts:Date.now()})
-            return Promise.resolve(o);
-        });
-        init().then(()=>{
-            var fired = false;
-            var f = function(a, b){
-                fired = true;
-                return a+b
-            }
-            var ff = cache({type:"age", maxAge:1000})(f);
-
-            var actual = ff(1,2);
-
-            assert.ok( !fired, "function should not be fired");
-            assert.equal( 3, actual);
-        })
-    })
-
-    it('should miss after cache load with old data (function)', ()=>{
-        set_load_all(()=>{
-            var o = {}
-            o['[1,2]'] = JSON.stringify({value:3, ts:Date.now()-10000})
-            return Promise.resolve(o);
-        });
-        init().then(()=>{
-            var fired = false;
-            var f = function(a, b){
-                fired = true;
-                return a+b
-            }
-            var ff = cache({type:"age", maxAge:1000})(f);
-
-            var actual = ff(1,2);
-
-            assert.ok( fired, "function should be fired");
-            assert.equal( 3, actual);
-        })
-    })    
-
-    it('should save after cache put (promise)', (done)=>{
+    it('should save after cache put', (done)=>{
         var _id;
         var _value;
         var _fired = false;
@@ -398,48 +388,18 @@ describe('vanilla js', function(){
 
         var pp = cache("forever")(p);
 
-        init().then(()=>{
-            var start = Date.now();
+        var start = Date.now();
 
-            pp({a:11,b:22})
-            .then(res=>{
-                setTimeout(function(){
-                    assert.ok( _fired, "save found be fired");
-                    assert.equal( _id, '[{"a":11,"b":22}]');
-                    assert.deepEqual( {a:11, b:22, sum:33}, JSON.parse(_value).value);
-                    done();
-                }, 500)
-            }).catch(err=>{
-                done(new Error(err));
-            })
-        })
-    })
-
-
-    it('should save after cache put (function)', ()=>{
-        var f = function(a, b){
-            return a+b
-        }
-        var ff = cache("forever")(f);
-
-        var _id;
-        var _value;
-        var _fired = false;
-        set_save((id, value)=>{
-            _id = id;
-            _value = value;
-            _fired = true;
-        });
-
-        init().then(()=>{
-
-            var start = Date.now();
-
-            ff(11, 22);
-
-            assert.ok( _fired, "save found be fired");
-            assert.equal( _id, '[11,22]');
-            assert.deepEqual( 33, JSON.parse(_value).value);
+        pp({a:11,b:22})
+        .then(res=>{
+            setTimeout(function(){
+                assert.ok( _fired, "save found be fired");
+                assert.equal( _id, '[{"a":11,"b":22}]');
+                assert.deepEqual( {a:11, b:22, sum:33}, JSON.parse(_value).value);
+                done();
+            }, 500)
+        }).catch(err=>{
+            done(new Error(err));
         })
     })
 
