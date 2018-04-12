@@ -2,14 +2,14 @@
   "author": "Artem Dudkin <sheeva@list.ru>",
   "name": "promise-cache-decorator",
   "license": "MIT",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "repository": {
     "type": "git",
     "url": "git@github.com:artemdudkin/promise-cache-decorator.git"
   },
   "main": "index.js",
   "scripts": {
-    "test": "cd tests && webpack && cd .. && ./node_modules/.bin/mocha tests/test*",
+    "test": "cd tests && webpack && cd .. && node_modules/.bin/mocha tests/test*",
     "coverage": "cd tests && webpack && cd .. && ./node_modules/.bin/istanbul cover node_modules/.bin/_mocha -- tests/test*",
     "coveralls": "cd tests && webpack && cd .. && ./node_modules/.bin/istanbul cover ./node_modules/.bin/_mocha --report lcovonly -- tests/test* && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -fr ./coverage"
   },

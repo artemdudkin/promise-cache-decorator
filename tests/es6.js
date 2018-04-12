@@ -1,16 +1,29 @@
-const assert = require("assert");
-const {cache, init, set_load_all, set_save, invalidate_all, register_validator} = require("../index");
+import assert from "assert";
+import {cache, init, set_load_all, set_save, invalidate_all, register_validator} from "../index";
 
+var loader_called = false;
 
 class A {
-    @cache("forever")
-    cf(data){
+    constructor() {
+        this.test = "test";
+    }
+    @cache({
+        type:"forever",
+        tardy:"show_loader"
+    })
+    get(data){
+        var me = this;
         return new Promise((resolve, reject)=>{
             setTimeout(function(){
+                data.test = me.test;
                 if (data.a && data.b) data.sum=data.a + data.b;
                 resolve(data);
             }, 2000);
         })
+    }
+
+    show_loader(){
+        loader_called = true;
     }
 }
 
@@ -24,16 +37,21 @@ describe('es6', function(){
 
         const a = new A();
 
-        a.cf({a:1,b:2})
+        a.get({a:1,b:2})
         .then(res=>{
             let delta = Date.now() - start;
             assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
+            assert.equal("test", res.test, "class instance context is lost");
+//console.log("loader after resolve()", loader);
+            assert.ok( loader_called, "should start 'tardy' on first call");
         }).then(res=>{
             start = Date.now();
-            return a.cf({a:1,b:2})
+            loader_called = false;
+            return a.get({a:1,b:2})
         }).then(res=>{
             let delta = Date.now() - start;
             assert.ok( delta < 100, "cache hit should be less then 100 while it is " + delta);
+            assert.ok( !loader_called, "should not start 'tardy' on second call");
             done();
         }).catch(err=>{
             done(new Error(err));
