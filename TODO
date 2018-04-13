@@ -6,7 +6,6 @@ force update
 
 fix windows 'npm run'
 
-fix once-a-day test failing on 59s on minute
 Add 'tardy' handler timeout setting
 
 add sample project
