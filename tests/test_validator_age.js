@@ -15,6 +15,18 @@ describe('age validator', function(){
         assert.throws(
             () => { invalid({}, {}) },
             /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+
+        assert.throws(
+            () => { invalid({}) },
+            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+
+        assert.throws(
+            () => { invalid({}, 123) },
+            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+
+        assert.throws(
+            () => { invalid({}, '123') },
+            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
     })    
 
     it('NOT invalid() @ item.ts + maxAge is greater then current time', ()=> {
