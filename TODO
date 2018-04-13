@@ -1,10 +1,10 @@
 two calls should return the same (unresolved)promise
 tests the same input data @ different cached promises (i.e. add 'id' option, random by default)
 
-fix windows 'npm run'
-
 Add 'tardy' handler timeout setting
 
+fix windows 'npm run'
+fix problem - ES6 tests does not count at coverage
 once-a-day validator pattern
 validator tests
 force update
