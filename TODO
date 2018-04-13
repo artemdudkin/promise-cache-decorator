@@ -6,7 +6,6 @@ Add 'tardy' handler timeout setting
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
 once-a-day validator pattern
-validator tests
 force update
 
 add sample project
