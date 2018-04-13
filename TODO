@@ -1,12 +1,13 @@
-once-a-day validator pattern
-validator tests
 two calls should return the same (unresolved)promise
 tests the same input data @ different cached promises (i.e. add 'id' option, random by default)
-force update
 
 fix windows 'npm run'
 
 Add 'tardy' handler timeout setting
+
+once-a-day validator pattern
+validator tests
+force update
 
 add sample project
 
@@ -16,4 +17,3 @@ Add lowdb
 Add tests for persistance adapters
 comment code (index.js)
 replace console.warn with Errors?
-update unit tests to reach 90%
