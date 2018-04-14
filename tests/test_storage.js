@@ -50,7 +50,7 @@ describe('storage', function(){
         setStorage({
             load : (id) => {
                 let value;
-                if (id === JSON.stringify([{a:1, b:2}])) {
+                if (id === '123:'+JSON.stringify([{a:1, b:2}])) {
                     value = JSON.stringify({value:{a:11, b:22, sum:33}, ts:Date.now()})
                 }
                 return Promise.resolve(value);
@@ -59,7 +59,7 @@ describe('storage', function(){
             delete : () => {   return Promise.resolve()},
         });
 
-        var pp = cache("forever")(p);
+        var pp = cache({type:"forever", id:"123"})(p);
         
         pp({a:1,b:2})
         .then(res=>{
@@ -76,7 +76,7 @@ describe('storage', function(){
         setStorage({
             load : (id) => {
                 let value;
-                if (id === JSON.stringify([{a:1, b:2}])) {
+                if (id === 'abc:'+JSON.stringify([{a:1, b:2}])) {
                   value = JSON.stringify({value:{a:1, b:2, sum:3}, ts:Date.now() - 10000})
                 }
                 return Promise.resolve(value);
@@ -85,7 +85,7 @@ describe('storage', function(){
             delete : () => {return Promise.resolve()},
         });
 
-        var pp = cache({type:"age", maxAge:1000})(p);
+        var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
 
         pp({a:1,b:2})
         .then(res=>{
@@ -110,12 +110,12 @@ describe('storage', function(){
             delete : () => {return Promise.resolve()},
         });
 
-        var pp = cache("forever")(p);
+        var pp = cache({type:"forever", id:"qaz"})(p);
 
         pp({a:3,b:4})
         .then(res=>{
             assert.ok( _fired, "save found be fired");
-            assert.equal( _id, '[{"a":3,"b":4}]');
+            assert.equal( _id, 'qaz:[{"a":3,"b":4}]');
             assert.deepEqual( {a:3, b:4, sum:7}, JSON.parse(_value).value);
             done();
         }).catch(done)

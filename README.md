@@ -64,17 +64,14 @@ class API {
 Implemented only React-Native AsyncStorage by now.
 
 ```js
-const {cache, init, set_save, set_load_all} = require('promise-cache-decorator');
-const {save, load_all} = require('promise-cache-decorator/lib/asyncStorage');
+const {cache, setStorage} = require('promise-cache-decorator');
+const storage = require('promise-cache-decorator/lib/storage/asyncStorage');
 
-set_save(save);
-set_load_all(load_all);
+setStorage(storage);
 
-init().then(()=>{
-  //1. will load all items from AsyncStorage to cache
-  //2. you can do all things from previous example
-  //3. will call save() on promise resolves (to save item to AsyncStorage)
-})
+//1. you can do all things from previous example
+//2. also will try to load item from AsyncStorage on cache "get" if not exists
+//3. also will call save() on promise resolves (to save item to AsyncStorage)
 
 ```
 

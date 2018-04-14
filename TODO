@@ -1,7 +1,3 @@
-tests the same input data @ different cached promises (i.e. add 'id' option, random by default)
-
-Add 'tardy' handler timeout setting
-
 replace "thow new Error" at validators by console.error
 how to test console.error?
 

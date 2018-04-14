@@ -93,8 +93,8 @@ describe('vanilla js decorator', function(){
 
     it('should miss and miss with cache ttl 1s (on 2s pause)', (done)=> {
         invalidate_all();
-        var pp = cache("forever")(p);
-        var ppp = cache({type:"age", maxAge:1000})(p);
+        var pp = cache({type:"forever", id:"1sTTL"})(p);
+        var ppp = cache({type:"age", maxAge:1000, id:"1sTTL"})(p);
 
         var start = Date.now();        
         pp({a:1,b:2})
@@ -114,8 +114,8 @@ describe('vanilla js decorator', function(){
     
     it('should miss and hit with cache ttl 5s (on 2s pause)', (done)=> {
         invalidate_all();
-        var pp = cache()(p);
-        var ppp = cache({type:"age", maxAge:5000})(p);
+        var pp = cache({type:"forever", id:"5sTTL"})(p);
+        var ppp = cache({type:"age", maxAge:5000, id:"5sTTL"})(p);
 
         var start = Date.now();
         pp({a:1,b:2})
@@ -303,7 +303,6 @@ describe('vanilla js decorator', function(){
         var p1 = () => {return ++count}
         var dp1 = deferred(p1, 2000);
         var pp = cache("forever")(dp1);
-        var dpp = deferred(pp, 200);
 
         var start = Date.now();
         dp1()
@@ -319,11 +318,32 @@ describe('vanilla js decorator', function(){
             assert.equal(2, res);
         })
         .then(res=>{
+            var dpp = deferred(pp, 200);
             return Promise.all([pp(), dpp()]);
         })
         .then(res=>{
             assert.equal(3, res[0]);
             assert.equal(3, res[1]);
+            done()
+        }).catch(done)
+    })
+
+    it('should return different data from cache for different functions even if it have the same input data', (done)=>{
+        var count = 0;
+        var p1_func = () => {return ++count}
+        var p1 = deferred(p1_func, 2000);
+        var pp1 = cache("forever")(p1);
+
+        var pp = cache("forever")(p);
+
+        var start = Date.now();
+        pp({a:10, b:1})
+        .then(res=>{
+            assert.equal(11, res.sum);
+            return pp1({a:10, b:1})
+        })
+        .then(res=>{
+            assert.equal(1, res);
             done()
         }).catch(done)
     })
