@@ -1,7 +1,7 @@
 const assert = require("assert");
-const {invalid, parse} = require("../lib/validator/age");
+const {invalid} = require("../lib/validator/age");
 
-describe('age validator', function(){
+describe('validator:age', function(){
 
     it('opt.maxAge should be number', ()=> {
         assert.throws(

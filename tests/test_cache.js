@@ -1,5 +1,5 @@
 const assert = require("assert");
-const {put, get, invalidate_all} = require("../lib/cache");
+const {put, get, remove, invalidate_all} = require("../lib/cache");
 
 
 
@@ -23,19 +23,22 @@ describe('cache', function(){
     })
 
 
-    it('put + get', (done)=> {
+    it('put + get + delete + get', (done)=> {
         invalidate_all();
 
         put("forever", "a", 1)
         .then(()=>{
-          get("forever", "a").then(res => {
+          return get("forever", "a");
+        }).then(res => {
             assert.equal( 1, res);
+        }).then(res => {
+            return remove("forever", "a");
+        }).then(()=>{
+            return get("forever", "a");
+        }).then(res => {
+            assert.equal( undefined, res);
+        }).then(res=>{
             done();
-          })
-        })
+        }).catch(done)
     })
-
-// add tests for   
-//if (typeof id != 'string') throw new Error('cache key sould be string');
-
 })

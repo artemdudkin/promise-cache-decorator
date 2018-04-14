@@ -1,7 +1,7 @@
 const assert = require("assert");
-const {invalid, parse} = require("../lib/validator/forever");
+const {invalid} = require("../lib/validator/forever");
 
-describe('forever validator', function(){
+describe('validator:forever', function(){
 
     it('should return false', ()=> {
         assert.equal( false, invalid());

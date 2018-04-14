@@ -1,18 +1,19 @@
-two calls should return the same (unresolved)promise
 tests the same input data @ different cached promises (i.e. add 'id' option, random by default)
 
 Add 'tardy' handler timeout setting
 
+replace "thow new Error" at validators by console.error
+how to test console.error?
+
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
+fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
 once-a-day validator pattern
 force update
 
-add sample project
+add sample (React) project
 
-refactoring of persistance adapters
-Add localStorage 
-Add lowdb
+Add storage/localStorage 
+Add storage/lowdb
 Add tests for persistance adapters
 comment code (index.js)
-replace console.warn with Errors?

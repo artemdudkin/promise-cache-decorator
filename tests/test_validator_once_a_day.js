@@ -1,7 +1,7 @@
 const assert = require("assert");
 const {invalid, parse} = require("../lib/validator/once_a_day");
 
-describe('once-a-day validator', function(){
+describe('validator:once-a-day', function(){
 
     it('once-a-day parse() should throw Error on h=24', ()=> {
         assert.throws( 
