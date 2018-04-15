@@ -1,3 +1,5 @@
+add tests for slow 'load' @ storage
+
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
