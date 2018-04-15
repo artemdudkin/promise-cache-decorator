@@ -17,7 +17,7 @@ const cached_by_5_mins = cache({type:"age", maxAge:5*60*1000})(p)
 
 const cached_by_5_mins_showing_loader_on_slow_requests = cache({
   type:"age", 
-  maxAge:5*60*1000, 
+  maxAge:5*60*1000,//5 minutes
   tardy : show_loader // will call this handler in 1 second 
                       //(if Promise was not resolved earlier)
 })(p);
@@ -46,7 +46,7 @@ class API {
     @cache({
       type:"once-a-day",
       time:"14:00",
-      tardy:"loader"
+      tardy:"loader" //will call this.loader()
     })
     getMoscowWeather(){
       return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
