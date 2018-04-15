@@ -1,4 +1,5 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const {cache, invalidate_all, setStorage} = require("../index");
 
 var p = (data) => {
@@ -119,6 +120,31 @@ describe('storage', function(){
             assert.deepEqual( {a:3, b:4, sum:7}, JSON.parse(_value).value);
             done();
         }).catch(done)
+    })
+
+    it('should console.error if cannot parse item from storage', (done)=>{
+        sinon.spy(console, "error");
+
+        setStorage({
+            save : ()=>{return Promise.resolve()},
+            load : () => {return Promise.resolve("{123")},
+            delete : () => {return Promise.resolve()},
+        });
+
+        var pp = cache({type:"forever"})(p);
+
+        pp({a:3,b:4})
+        .then(res=>{
+            assert.equal(7, res.sum);
+            assert.ok(console.error.calledOnce);
+            assert.equal("Can not parse json '{123'", console.error.getCall(0).args[0]);
+
+            console.error.restore();
+            done();
+        }).catch(err => {
+            console.error.restore();
+            done(err);
+        })
     })
 
 })

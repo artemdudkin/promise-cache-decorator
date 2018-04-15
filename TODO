@@ -1,6 +1,3 @@
-replace "thow new Error" at validators by console.error
-how to test console.error?
-
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test

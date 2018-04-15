@@ -42,7 +42,6 @@ describe('es6 decorator', function(){
             let delta = Date.now() - start;
             assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
             assert.equal("test", res.test, "class instance context is lost");
-//console.log("loader after resolve()", loader);
             assert.ok( loader_called, "should start 'tardy' on first call");
         }).then(res=>{
             start = Date.now();
@@ -53,8 +52,6 @@ describe('es6 decorator', function(){
             assert.ok( delta < 100, "cache hit should be less then 100 while it is " + delta);
             assert.ok( !loader_called, "should not start 'tardy' on second call");
             done();
-        }).catch(err=>{
-            done(new Error(err));
-        })
+        }).catch(done);
     })    
 })

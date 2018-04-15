@@ -1,32 +1,45 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const {invalid} = require("../lib/validator/age");
+
+assertConsoleErrorWithFalseFunc = (func, message) => {
+    var actual = func();
+    assert.equal(true, actual);
+    assert.ok(console.error.calledOnce);
+    assert.equal(message, console.error.getCall(0).args[0]);
+    console.error.resetHistory();
+}
 
 describe('validator:age', function(){
 
     it('opt.maxAge should be number', ()=> {
-        assert.throws(
-            () => { invalid({}, { maxAge: '123' }) },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[123\]$/);
+        sinon.spy(console, "error");
 
-        assert.throws(
-            () => { invalid({}, { maxAge: {} }) },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[\[object Object\]\]$/);
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}, { maxAge: '123' }),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [123]");
 
-        assert.throws(
-            () => { invalid({}, {}) },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}, { maxAge: {} }),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [[object Object]]");
 
-        assert.throws(
-            () => { invalid({}) },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}, {}),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [undefined]");
 
-        assert.throws(
-            () => { invalid({}, 123) },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [undefined]");
 
-        assert.throws(
-            () => { invalid({}, '123') },
-            /^Error: opt.maxAge @ \"age\" validator does not exists or not a number \[undefined\]$/);
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}, 123),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [undefined]");
+
+        assertConsoleErrorWithFalseFunc(
+            () => invalid({}, '123'),
+            "ERROR: opt.maxAge @ \"age\" validator does not exists or not a number [undefined]");
+
+        console.error.restore();
     })    
 
     it('NOT invalid() @ item.ts + maxAge is greater then current time', ()=> {
