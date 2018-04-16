@@ -1,6 +1,8 @@
 add tests for slow 'load' @ storage
 add tests for 'no loader method' @ ES6 notation
 
+? test bluebird, q, etc.
+
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
