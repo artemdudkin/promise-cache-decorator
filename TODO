@@ -2,6 +2,9 @@ add tests for slow 'load' @ storage
 add tests for 'no loader method' @ ES6 notation
 
 ? test bluebird, q, etc.
+? run Fibonacci test from memoizee
+? add stats (look at memoizee)
+? add settings: hasher for keys and serializer for values
 
 fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
