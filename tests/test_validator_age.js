@@ -11,7 +11,6 @@ assertConsoleErrorWithFalseFunc = (func, message) => {
 }
 
 describe('validator:age', function(){
-
     it('opt.maxAge should be number', ()=> {
         sinon.spy(console, "error");
 

@@ -30,8 +30,11 @@ class A {
 describe('es6 decorator', function(){
     this.timeout(300 * 1000);
 
-    it('should miss and hit on cached forever (promise)', (done)=> {
+    beforeEach(function(){
         invalidate_all();
+    });
+
+    it('should miss and hit on cached forever', (done)=> {
 
         var start = Date.now();
 

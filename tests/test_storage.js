@@ -11,6 +11,10 @@ var p = (data) => {
 describe('storage', function(){
     this.timeout(300 * 1000);
 
+    beforeEach(function(){
+        invalidate_all();
+    });
+
     it('should have "save", "load", "delete"', ()=>{
         assert.throws(
             () => { setStorage() },
@@ -46,8 +50,6 @@ describe('storage', function(){
     });
 
     it('should hit after cache load', (done)=>{
-        invalidate_all();
-
         setStorage({
             load : (id) => {
                 let value;
@@ -72,8 +74,6 @@ describe('storage', function(){
     })
 
     it('should miss after cache load with old data', (done)=>{
-        invalidate_all();
-
         setStorage({
             load : (id) => {
                 let value;
@@ -118,6 +118,88 @@ describe('storage', function(){
             assert.ok( _fired, "save found be fired");
             assert.equal( _id, 'qaz:[{"a":3,"b":4}]');
             assert.deepEqual( {a:3, b:4, sum:7}, JSON.parse(_value).value);
+            done();
+        }).catch(done)
+    })
+
+    it('should "delete" after load invalid cache item', (done)=>{
+        var _delete_fired=false;
+        var _load_fired=false;
+        var _load_result=false;
+        setStorage({
+            load : (id) => {
+                _load_fired = true;
+                let value;
+                if (id === 'abc:'+JSON.stringify([{a:1, b:2}])) {
+                  value = JSON.stringify({value:{a:1, b:2, sum:3}, ts:Date.now() - 10000})
+                }
+                _load_result = value;
+                return Promise.resolve(value);
+            },
+            save : () => {return Promise.resolve()},
+            delete : () => {
+                _delete_fired=true;
+                return Promise.resolve()
+            },
+        });
+
+        var _promise_fired = false;
+        var p = () => {
+            _promise_fired = true;
+            return Promise.resolve("123")
+        }
+        var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
+
+        pp({a:1,b:2})
+        .then(res=>{
+            assert.ok(_load_fired, "storage 'load' should be fired");
+            assert.deepEqual({a:1, b:2, sum:3}, JSON.parse(_load_result).value);
+
+            assert.ok(_delete_fired, "storage 'delete' should be fired");
+            assert.equal("123", res);
+            done();
+        }).catch(done)
+    })
+
+    it('should "delete" after cache item invalidated', (done)=>{
+        var _delete_id;
+        var _saved_id;
+        setStorage({
+            load : (id) => {return Promise.resolve()},
+            save : (id) => {
+                _saved_id = id;
+                return Promise.resolve()
+            },
+            delete : (id) => {
+                _deleted_id=id;
+                return Promise.resolve()
+            },
+        });
+
+        var pp = cache({type:"age", maxAge:500, id:"abc"})(p);
+        var pp_id = 'abc:'+JSON.stringify([{a:1, b:2}]);
+
+        pp({a:1,b:2})
+        .then(res=>{
+            assert.equal(pp_id, _saved_id);
+            assert.equal("undefined", typeof _deleted_id);
+
+            //wait 1s to invalidate cache
+            return new Promise((resolve, reject) => {
+                setTimeout(function () {
+                    resolve();
+                }, 1000);
+            })
+        })
+        .then(res=>{
+            _delete_id = undefined;
+            _saved_id = undefined;
+    
+            return pp({a:1,b:2})
+        })
+        .then(res=>{
+            assert.equal(pp_id, _saved_id);
+            assert.equal(pp_id, _deleted_id);
             done();
         }).catch(done)
     })

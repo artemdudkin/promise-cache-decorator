@@ -20,9 +20,11 @@ var p = deferred(p_func, 2000);
 describe('vanilla js decorator', function(){
     this.timeout(300 * 1000);
 
-    it('should miss and miss on uncached (promise)', (done)=> {
+    beforeEach(function(){
         invalidate_all();
+    });
 
+    it('should miss and miss on uncached (promise)', (done)=> {
         var start = Date.now();
 
         p({a:1,b:2})
@@ -41,7 +43,6 @@ describe('vanilla js decorator', function(){
 
 
     it('should miss and hit on cached forever', (done)=> {
-        invalidate_all();
         var pp = cache("forever")(p);
 
         var start = Date.now();
@@ -62,8 +63,6 @@ describe('vanilla js decorator', function(){
 
 
     it('should miss and hit on cached forever @ Promise.all', (done)=> {
-        invalidate_all();
-
         var p2 = deferred(()=>1, 4000);
 
         var p3 = (data) => {
@@ -92,7 +91,6 @@ describe('vanilla js decorator', function(){
     })    
 
     it('should miss and miss with cache ttl 1s (on 2s pause)', (done)=> {
-        invalidate_all();
         var pp = cache({type:"forever", id:"1sTTL"})(p);
         var ppp = cache({type:"age", maxAge:1000, id:"1sTTL"})(p);
 
@@ -113,7 +111,6 @@ describe('vanilla js decorator', function(){
 
     
     it('should miss and hit with cache ttl 5s (on 2s pause)', (done)=> {
-        invalidate_all();
         var pp = cache({type:"forever", id:"5sTTL"})(p);
         var ppp = cache({type:"age", maxAge:5000, id:"5sTTL"})(p);
 
@@ -133,7 +130,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('should miss and miss on always-miss-validator', (done)=>{
-        invalidate_all();
         register_validator("always-miss", function invalid(item, opt){
             return true;
         });
@@ -157,8 +153,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('should miss and hit and miss on once-a-day validator', (done) => {
-        invalidate_all();
-
         var dt = new Date( (new Date()).getTime() + 3000);
         var dayUpdateTime = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds(); //cache will inavidate in 3 seconds
         var pp = cache({ type: "once-a-day", time: dayUpdateTime })(p);
@@ -193,8 +187,6 @@ describe('vanilla js decorator', function(){
     })
 
     it("should fire 'tardy' on slow promises", (done)=> {
-        invalidate_all();
-
         var fired = false;
         var pp = cache({
             type : "forever",
@@ -229,8 +221,6 @@ describe('vanilla js decorator', function(){
     })
 
     it("should not throw error if promise is slow while there is no 'tardy' at option object", (done)=> {
-        invalidate_all();
-
         var fired = false;
         var p2 = cache({type : "forever"})(p);
         var p3 = cache("forever")(p);
@@ -249,8 +239,6 @@ describe('vanilla js decorator', function(){
     
 
     it("should not fire 'tardy' on fast promises", (done)=> {
-        invalidate_all();
-
         var fired = false;
         var p = deferred(p_func, 500);
         var pp = cache({
@@ -270,8 +258,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('do not cache rejected promise', (done) => {
-        invalidate_all();
-  
         var fired = false;
         var p = (data) => {
           return new Promise((resolve, reject)=>{
@@ -299,8 +285,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('should return same promise for two almost simultaneous function calls', (done)=>{
-        invalidate_all();
-
         var count = 0;
         var p1 = () => {return ++count}
         var dp1 = deferred(p1, 2000);
@@ -331,8 +315,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('should return different data from cache for different functions even if it have the same input data', (done)=>{
-        invalidate_all();
-
         var count = 0;
         var p1_func = () => {return ++count}
         var p1 = deferred(p1_func, 2000);
@@ -353,8 +335,6 @@ describe('vanilla js decorator', function(){
     })
 
     it('should catch error within original func', (done)=>{
-        invalidate_all();
-
         var p1 = (...rest) => {
             throw new Error("this is a error");
         }
@@ -373,8 +353,6 @@ describe('vanilla js decorator', function(){
     });
 
     it('should return err from original func', (done)=>{
-        invalidate_all();
-
         var p1 = () => {
             return Promise.reject("123");
         }
@@ -391,20 +369,16 @@ describe('vanilla js decorator', function(){
         .catch(done);
     });
 
-/*
-    it('should re-run original func after update() on rejected Promise', (done)=>{
-        invalidate_all();
 
-        var res={};
-//        var counter=0;
+    it('should re-run original func after update() on rejected Promise', (done)=>{
+        var result={};
+        var counter=0;
         var p1 = (...rest) => {
-            res = {
+            result = {
                 fired:true,
-                args :rest,
-                test :this.test
+                args :rest
             }
             if (counter++ == 0) {
-                this.test = "test";
                 return Promise.reject();
             } else {
                 return Promise.resolve();
@@ -412,26 +386,21 @@ describe('vanilla js decorator', function(){
         }
         var pp1 = cache("forever")(p1);
 
-        const p = pp1({a:10, b:1});
-
-console.log("===p", Object.keys(p));
-
-        p.then(res=>{
+        pp1({a:10, b:1})
+        .then(res=>{
             assert.fail("should reject first time");
         })
         .catch(err =>{
-            assert.ok(res.fired, "original func should be fired");
+            assert.ok(result.fired, "original func should be fired");
             res = {}
-console.log("p", Object.keys(p));
-console.log("this", Object.keys(this));
-            return p.update();
+//            return pp1.update({a:10, b:1});
+            return pp1({a:10, b:1});
         })
         .then(res=>{
-            assert.ok(res.fired, "original func should be fired second time");
-            assert.deepEqual([{a:10, b:1}], res.rest);
-            assert.equal(res.test, "test");
+            assert.ok(result.fired, "original func should be fired second time");
+            assert.deepEqual([{a:10, b:1}], result.args);
             done()
         }).catch(done)
     })
-*/
+
 })

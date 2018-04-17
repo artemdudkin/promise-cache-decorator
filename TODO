@@ -1,4 +1,3 @@
-add tests for Promises that returns several args
 add tests for slow 'load' @ storage
 add tests for 'no loader method' @ ES6 notation
 

@@ -6,17 +6,17 @@ const {put, get, remove, invalidate_all} = require("../lib/cache");
 describe('cache', function(){
     this.timeout(300 * 1000);
 
-    it('cache key sould be string @ put', ()=> {
+    beforeEach(function(){
         invalidate_all();
+    });
 
+    it('cache key sould be string @ put', ()=> {
         assert.throws( 
             ()=>{put()}, 
             /^Error: cache key sould be string$/);
     })
 
     it('cache key sould be string @ get', ()=> {
-        invalidate_all();
-
         assert.throws( 
             ()=>{get()}, 
             /^Error: cache key sould be string$/);
@@ -24,8 +24,6 @@ describe('cache', function(){
 
 
     it('put + get + delete + get', (done)=> {
-        invalidate_all();
-
         put("forever", "a", 1)
         .then(()=>{
           return get("forever", "a");
