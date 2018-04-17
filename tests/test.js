@@ -299,6 +299,8 @@ describe('vanilla js decorator', function(){
     })
 
     it('should return same promise for two almost simultaneous function calls', (done)=>{
+        invalidate_all();
+
         var count = 0;
         var p1 = () => {return ++count}
         var dp1 = deferred(p1, 2000);
@@ -329,6 +331,8 @@ describe('vanilla js decorator', function(){
     })
 
     it('should return different data from cache for different functions even if it have the same input data', (done)=>{
+        invalidate_all();
+
         var count = 0;
         var p1_func = () => {return ++count}
         var p1 = deferred(p1_func, 2000);
@@ -348,4 +352,68 @@ describe('vanilla js decorator', function(){
         }).catch(done)
     })
 
+    it('should catch error within original func', (done)=>{
+        invalidate_all();
+
+        var p1 = (...rest) => {
+            throw new Error("this is a error");
+        }
+        var pp1 = cache("forever")(p1);
+
+        pp1({a:10, b:1})
+        .then(res=>{
+            assert.fail("should reject first time");
+        })
+        .catch(err=>{
+            assert.ok( err instanceof Error, "err should be Error");
+            assert.equal( err.toString(), "Error: this is a error");
+        })
+        .then(res=>{
+            done();
+        })
+        .catch(done);
+    });
+/*
+    it('should re-run original func after update() on rejected Promise', (done)=>{
+        invalidate_all();
+
+        var res={};
+//        var counter=0;
+        var p1 = (...rest) => {
+            res = {
+                fired:true,
+                args :rest,
+                test :this.test
+            }
+            if (counter++ == 0) {
+                this.test = "test";
+                return Promise.reject();
+            } else {
+                return Promise.resolve();
+            }
+        }
+        var pp1 = cache("forever")(p1);
+
+        const p = pp1({a:10, b:1});
+
+console.log("===p", Object.keys(p));
+
+        p.then(res=>{
+            assert.fail("should reject first time");
+        })
+        .catch(err =>{
+            assert.ok(res.fired, "original func should be fired");
+            res = {}
+console.log("p", Object.keys(p));
+console.log("this", Object.keys(this));
+            return p.update();
+        })
+        .then(res=>{
+            assert.ok(res.fired, "original func should be fired second time");
+            assert.deepEqual([{a:10, b:1}], res.rest);
+            assert.equal(res.test, "test");
+            done()
+        }).catch(done)
+    })
+*/
 })
