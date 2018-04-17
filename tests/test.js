@@ -367,12 +367,30 @@ describe('vanilla js decorator', function(){
         .catch(err=>{
             assert.ok( err instanceof Error, "err should be Error");
             assert.equal( err.toString(), "Error: this is a error");
-        })
-        .then(res=>{
             done();
         })
         .catch(done);
     });
+
+    it('should return err from original func', (done)=>{
+        invalidate_all();
+
+        var p1 = () => {
+            return Promise.reject("123");
+        }
+        var pp1 = cache("forever")(p1);
+
+        pp1({a:10, b:1})
+        .then(res=>{
+            assert.fail("should reject first time");
+        })
+        .catch(err=>{
+            assert.equal( err, "123");
+            done();
+        })
+        .catch(done);
+    });
+
 /*
     it('should re-run original func after update() on rejected Promise', (done)=>{
         invalidate_all();
