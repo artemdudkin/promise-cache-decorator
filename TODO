@@ -1,5 +1,3 @@
-add tests for slow 'load' @ storage
-add tests for 'no loader method' @ ES6 notation
 
 ? test bluebird, q, etc.
 ? run Fibonacci test from memoizee

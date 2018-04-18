@@ -7,12 +7,22 @@ var p = (data) => {
     return Promise.resolve(data);
 }
 
-var wait1s = () => {
+var wait1s = (data) => {
     return new Promise((resolve, reject) => {
         setTimeout(function () {
-            resolve();
+            resolve(data);
         }, 1000);
     })
+}
+
+var deferred = (func, delay) => {
+    return (...rest) => {
+        return new Promise((resolve, reject) => {
+            setTimeout(function () {
+                resolve( func.apply(this, rest) );
+            }, delay);
+        })
+    }
 }
 
 
@@ -60,11 +70,13 @@ describe('storage', function(){
     it('should hit after cache load', (done)=>{
         setStorage({
             load : (id) => {
-                let value;
-                if (id === '123:'+JSON.stringify([{a:1, b:2}])) {
-                    value = JSON.stringify({value:{a:11, b:22, sum:33}, ts:Date.now()})
-                }
-                return Promise.resolve(value);
+                return deferred(()=>{
+                    let value;
+                    if (id === '123:'+JSON.stringify([{a:1, b:2}])) {
+                        value = JSON.stringify({value:{a:11, b:22, sum:33}, ts:Date.now()})
+                    }
+                    return Promise.resolve(value);
+                }, 1000)();
             },
             save : () => { return Promise.resolve()},
             delete : () => {   return Promise.resolve()},
