@@ -7,6 +7,14 @@ var p = (data) => {
     return Promise.resolve(data);
 }
 
+var wait1s = () => {
+    return new Promise((resolve, reject) => {
+        setTimeout(function () {
+            resolve();
+        }, 1000);
+    })
+}
+
 
 describe('storage', function(){
     this.timeout(300 * 1000);
@@ -229,4 +237,107 @@ describe('storage', function(){
         })
     })
 
+    it('should start original func if "load" Promise is rejected (+console.error)', (done)=>{
+        sinon.spy(console, "error");
+
+        setStorage({
+            save : ()=>{return Promise.resolve()},
+            load : (id) => {return Promise.reject("err")},
+            delete : () => {return Promise.resolve()},
+        });
+
+        var _fired = false;
+        var _p = () =>{
+            _fired = true;
+            return Promise.resolve(7);
+        }
+        var pp = cache({type:"forever", id:"qwe"})(_p);
+
+        pp({a:3,b:4})
+        .then(res=>{
+            assert.equal("ERROR: cannot load(qwe:[{\"a\":3,\"b\":4}]) from storage: err", console.error.getCall(0).args[0]);
+            assert.ok(_fired);
+            assert.equal(7, res);
+
+            console.error.restore();
+            done();
+        }).catch(err => {
+            console.error.restore();
+            done(err);
+        })
+    })    
+
+
+    it('should work if "save" Promise is rejected (+console.error)', (done)=>{
+        sinon.spy(console, "error");
+
+        setStorage({
+            save : ()=>{return Promise.reject("err")},
+            load : (id) => {return Promise.resolve()},
+            delete : () => {return Promise.resolve()},
+        });
+
+        var _fired = false;
+        var _p = () =>{
+            _fired = true;
+            return Promise.resolve(8);
+        }
+        var pp = cache({type:"forever", id:"qwe"})(_p);
+
+        pp({a:4,b:5})
+        .then(res=>{
+            assert.equal("ERROR: cannot save(qwe:[{\"a\":4,\"b\":5}]) to storage: err", console.error.getCall(0).args[0]);
+            assert.ok(_fired);
+            assert.equal(8, res);
+
+            console.error.restore();
+            done();
+        }).catch(err => {
+            console.error.restore();
+            done(err);
+        })
+    })    
+
+
+    it('should work if "delete" Promise is rejected on cache ivalidated (+console.error)', (done)=>{
+        sinon.spy(console, "error");
+
+        setStorage({
+            save : ()=>{return Promise.resolve()},
+            load : (id) => {return Promise.resolve()},
+            delete : () => {return Promise.reject("err")},
+        });
+
+        var _fired = false;
+        var _p = () =>{
+            _fired = true;
+            return Promise.resolve(8);
+        }
+        var pp = cache({type:"age", maxAge:500, id:"qwe"})(_p);
+
+        pp({a:5,b:6})
+        .then(res=>{
+            assert.equal( 0, console.error.callCount);
+            assert.ok(_fired);
+            assert.equal(8, res);            
+            return wait1s() //wait 1s to invalidate cache            
+        })
+        .then(res=>{
+            _fired=false;
+            return pp({a:5, b:6});
+        })
+        .then(res=>{
+            assert.equal( 1, console.error.callCount);
+            assert.equal("ERROR: cannot delete(qwe:[{\"a\":5,\"b\":6}]) from storage: err", console.error.getCall(0).args[0]);
+            assert.ok(_fired);
+            assert.equal(8, res);
+
+            console.error.restore();
+            done();
+        }).catch(err => {
+            console.error.restore();
+            done(err);
+        })
+    })    
+    
 })

@@ -370,7 +370,7 @@ describe('vanilla js decorator', function(){
     });
 
 
-    it('should re-run original func after update() on rejected Promise', (done)=>{
+    it('should re-run original func after forceUpdate() on rejected Promise', (done)=>{
         var result={};
         var counter=0;
         var p1 = (...rest) => {
@@ -393,8 +393,8 @@ describe('vanilla js decorator', function(){
         .catch(err =>{
             assert.ok(result.fired, "original func should be fired");
             res = {}
-//            return pp1.update({a:10, b:1});
-            return pp1({a:10, b:1});
+            return pp1.forceUpdate({a:10, b:1});
+//            return pp1({a:10, b:1});
         })
         .then(res=>{
             assert.ok(result.fired, "original func should be fired second time");
