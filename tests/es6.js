@@ -88,8 +88,12 @@ describe('es6 decorator', function(){
 
             assert.equal( 1, console.error.callCount);
             assert.equal("ERROR: cannot find tardy handler [show_loader_2]", console.error.getCall(0).args[0]);
-            
+
+            console.error.restore();
             done();
-        }).catch(done);
+        }).catch(err => {
+            console.error.restore();
+            done(err);
+        });
     })    
 })
