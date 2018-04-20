@@ -33,7 +33,7 @@ describe('storage', function(){
         invalidate_all();
     });
 
-    it('should have "save", "load", "delete"', ()=>{
+    it('should have "save", "load", "remove"', ()=>{
         assert.throws(
             () => { setStorage() },
             /^Error: cache storage should be object$/);
@@ -60,11 +60,11 @@ describe('storage', function(){
 
         assert.throws(
             () => { setStorage({ save: () => { }, load: () => { } }) },
-            /^Error: cache storage "delete" method should be function$/);
+            /^Error: cache storage "remove" method should be function$/);
 
         assert.throws(
-            () => { setStorage({ save: () => { }, load: () => { }, delete: {} }) },
-            /^Error: cache storage "delete" method should be function$/);
+            () => { setStorage({ save: () => { }, load: () => { }, remove: {} }) },
+            /^Error: cache storage "remove" method should be function$/);
     });
 
     it('should hit after cache load', (done)=>{
@@ -79,7 +79,7 @@ describe('storage', function(){
                 }, 1000)();
             },
             save : () => { return Promise.resolve()},
-            delete : () => {   return Promise.resolve()},
+            remove : () => {   return Promise.resolve()},
         });
 
         var pp = cache({type:"forever", id:"123"})(p);
@@ -103,7 +103,7 @@ describe('storage', function(){
                 return Promise.resolve(value);
             },
             save : () => {return Promise.resolve()},
-            delete : () => {return Promise.resolve()},
+            remove : () => {return Promise.resolve()},
         });
 
         var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
@@ -128,7 +128,7 @@ describe('storage', function(){
                 _fired = true;
             },
             load : () => {return Promise.resolve()},
-            delete : () => {return Promise.resolve()},
+            remove : () => {return Promise.resolve()},
         });
 
         var pp = cache({type:"forever", id:"qaz"})(p);
@@ -142,8 +142,8 @@ describe('storage', function(){
         }).catch(done)
     })
 
-    it('should "delete" after load invalid cache item', (done)=>{
-        var _delete_fired=false;
+    it('should "remove" after load invalid cache item', (done)=>{
+        var _remove_fired=false;
         var _load_fired=false;
         var _load_result=false;
         setStorage({
@@ -157,8 +157,8 @@ describe('storage', function(){
                 return Promise.resolve(value);
             },
             save : () => {return Promise.resolve()},
-            delete : () => {
-                _delete_fired=true;
+            remove : () => {
+                _remove_fired=true;
                 return Promise.resolve()
             },
         });
@@ -175,14 +175,14 @@ describe('storage', function(){
             assert.ok(_load_fired, "storage 'load' should be fired");
             assert.deepEqual({a:1, b:2, sum:3}, JSON.parse(_load_result).value);
 
-            assert.ok(_delete_fired, "storage 'delete' should be fired");
+            assert.ok(_remove_fired, "storage 'remove' should be fired");
             assert.equal("123", res);
             done();
         }).catch(done)
     })
 
-    it('should "delete" after cache item invalidated', (done)=>{
-        var _delete_id;
+    it('should "remove" after cache item invalidated', (done)=>{
+        var _removed_id;
         var _saved_id;
         setStorage({
             load : (id) => {return Promise.resolve()},
@@ -190,8 +190,8 @@ describe('storage', function(){
                 _saved_id = id;
                 return Promise.resolve()
             },
-            delete : (id) => {
-                _deleted_id=id;
+            remove : (id) => {
+                _removed_id=id;
                 return Promise.resolve()
             },
         });
@@ -202,7 +202,7 @@ describe('storage', function(){
         pp({a:1,b:2})
         .then(res=>{
             assert.equal(pp_id, _saved_id);
-            assert.equal("undefined", typeof _deleted_id);
+            assert.equal("undefined", typeof _removed_id);
 
             //wait 1s to invalidate cache
             return new Promise((resolve, reject) => {
@@ -212,14 +212,14 @@ describe('storage', function(){
             })
         })
         .then(res=>{
-            _delete_id = undefined;
+            _removed_id = undefined;
             _saved_id = undefined;
     
             return pp({a:1,b:2})
         })
         .then(res=>{
             assert.equal(pp_id, _saved_id);
-            assert.equal(pp_id, _deleted_id);
+            assert.equal(pp_id, _removed_id);
             done();
         }).catch(done)
     })
@@ -230,7 +230,7 @@ describe('storage', function(){
         setStorage({
             save : ()=>{return Promise.resolve()},
             load : () => {return Promise.resolve("{123")},
-            delete : () => {return Promise.resolve()},
+            remove : () => {return Promise.resolve()},
         });
 
         var pp = cache({type:"forever"})(p);
@@ -255,7 +255,7 @@ describe('storage', function(){
         setStorage({
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.reject("err")},
-            delete : () => {return Promise.resolve()},
+            remove : () => {return Promise.resolve()},
         });
 
         var _fired = false;
@@ -286,7 +286,7 @@ describe('storage', function(){
         setStorage({
             save : ()=>{return Promise.reject("err")},
             load : (id) => {return Promise.resolve()},
-            delete : () => {return Promise.resolve()},
+            remove : () => {return Promise.resolve()},
         });
 
         var _fired = false;
@@ -311,13 +311,13 @@ describe('storage', function(){
     })    
 
 
-    it('should work if "delete" Promise is rejected on cache ivalidated (+console.error)', (done)=>{
+    it('should work if "remove" Promise is rejected on cache ivalidated (+console.error)', (done)=>{
         sinon.spy(console, "error");
 
         setStorage({
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.resolve()},
-            delete : () => {return Promise.reject("err")},
+            remove : () => {return Promise.reject("err")},
         });
 
         var _fired = false;
@@ -340,7 +340,7 @@ describe('storage', function(){
         })
         .then(res=>{
             assert.equal( 1, console.error.callCount);
-            assert.equal("ERROR: cannot delete(qwe:[{\"a\":5,\"b\":6}]) from storage: err", console.error.getCall(0).args[0]);
+            assert.equal("ERROR: cannot remove(qwe:[{\"a\":5,\"b\":6}]) from storage: err", console.error.getCall(0).args[0]);
             assert.ok(_fired);
             assert.equal(8, res);
 
