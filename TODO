@@ -8,7 +8,6 @@ fix windows 'npm run'
 fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
 once-a-day validator pattern
-force update
 
 add sample (React) project
 
