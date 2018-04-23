@@ -1,0 +1,37 @@
+{
+  "author": "Artem Dudkin <sheeva@list.ru>",
+  "name": "promise-cache-decorator-examples",
+  "license": "MIT",
+  "scripts": {
+    "dev": "webpack --watch --progress"
+  },
+  "devDependencies": {
+    "autobind-decorator": "^1.3.4",
+    "autoprefixer": "^6.3.6",
+    "babel-core": "^6.24.0",
+    "babel-loader": "^6.2.5",
+    "babel-plugin-transform-decorators-legacy": "^1.3.4",
+    "babel-plugin-transform-es2015-classes": "^6.22.0",
+    "babel-plugin-transform-es3-member-expression-literals": "^6.8.0",
+    "babel-plugin-transform-es3-property-literals": "^6.8.0",
+    "babel-plugin-transform-object-assign": "^6.8.0",
+    "babel-plugin-transform-object-rest-spread": "^6.22.0",
+    "babel-plugin-transform-proto-to-assign": "^6.22.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "css-loader": "^0.6.12",
+    "file-loader": "^0.10.0",
+    "postcss-loader": "^1.3.3",
+    "precss": "^1.4.0",
+    "style-loader": "^0.6.5",
+    "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "axios": "^0.18.0",
+    "bluebird": "^3.5.1",
+    "lodash.get": "^4.4.2",
+    "promise-cache-decorator": "^0.2.11",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
+  }
+}

@@ -1,0 +1,24 @@
+table { 
+    border-spacing: 0;
+    border-collapse: collapse;
+}
+.icon {
+    width: 25px;
+    height: 25px;
+    background-repeat: no-repeat;
+}
+.sun {
+    background-image: url(img/sun.svg);
+}
+.clouds {
+    background-image: url(img/clouds.svg);
+}
+.rain {
+    background-image: url(img/rain.svg);
+}
+.snow {
+    background-image: url(img/snow.svg);
+}
+.storm {
+    background-image: url(img/storm.svg);
+}
