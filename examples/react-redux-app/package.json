@@ -25,6 +25,7 @@
     "file-loader": "^1.1.11",
     "postcss-loader": "^2.1.4",
     "precss": "^3.1.2",
+    "redux-logger": "^3.0.6",    
     "style-loader": "^0.21.0",
     "webpack": "^4.6.0"
   },
@@ -33,6 +34,9 @@
     "lodash.get": "^4.4.2",
     "promise-cache-decorator": "^0.2.11",
     "react": "^16.3.2",
-    "react-dom": "^16.3.2"
+    "react-dom": "^16.3.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-thunk": "^2.2.0"
   }
 }
