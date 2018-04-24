@@ -58,7 +58,8 @@ export class Forecast extends Component {
 47	isolated thundershowers
 3200	not available
 */
-		const { code, high, day } = item;
+//console.log("item", item);
+		const { code, high, day, date } = item;
 
 		var cls = '';
 		if (['31','32','33','34','36'].indexOf(code)!=-1) cls='sun';
@@ -68,7 +69,7 @@ export class Forecast extends Component {
 		if (['0','1','2','3','4','37','38','47'].indexOf(code)!=-1) cls='storm';
 
 		return (
-			<td style={{ verticalAlign:"bottom"}}>
+			<td style={{ verticalAlign:"bottom"}} key={date}>
     			<table>
 				<tbody>
 					<tr><td><div >{high}</div></td></tr>
@@ -86,11 +87,11 @@ export class Forecast extends Component {
 		if (!(data instanceof Array)) data = [];
 
 		return (
-			<table><tr vAlign="bottom">
+			<table><tbody><tr>
 				{data.map(_=>{
 					return this.renderItem(_)
 				})}
-			</tr></table>	
+			</tr></tbody></table>	
 		);
 	}
 }

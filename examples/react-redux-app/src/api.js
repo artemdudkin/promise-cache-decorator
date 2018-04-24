@@ -20,7 +20,7 @@ setStorage({
         if (typeof localStorage != 'undefined') {
             try {
                 const value = localStorage.getItem("cache-" + id)
-                return Promise.resolve(value);
+                return Promise.resolve(value==null?undefined:value);
             } catch (err) {
                 return Promise.reject(err);
             }
@@ -48,7 +48,18 @@ var deferred = (func, delay) => {
     return (...rest) => {
         return new Promise((resolve, reject) => {
             setTimeout(function () {
-                resolve( func.apply(this, rest) );
+                const res = func.apply(this, rest);
+                if (!(res instanceof Promise)) {
+                    resolve( res );
+                } else {
+                    res
+                    .then(res=>{
+                        resolve(res);
+                    })
+                    .catch(err=>{
+                        reject(err);
+                    })
+                }
             }, delay);
         })
     }
@@ -70,4 +81,4 @@ export const getWeather = cache({
     type:"age",
     maxAge:20000,
     id:"weather"
-})(deferred(_getWeather, 5000));
+})(deferred(_getWeather, 3000));

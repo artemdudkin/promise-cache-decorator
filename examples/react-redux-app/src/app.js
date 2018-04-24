@@ -30,16 +30,20 @@ export class App extends Component {
 		})
 	}
 
+	parseErr(err){
+		return  (err instanceof Error ? err.toString() : err);
+	}
+
 	render() {
 		const { locked, data, err } = this.state;
-		const forecast = get(data, "query.results.channel.item.forecast");
+		const forecast = get(data, "query.results.channel.item.forecast", []);
 
 		return (
 		<div>
 			{locked &&
 				<Wait/>}
 			{!locked && err && 
-				<div>ERROR: {JSON.stringify(err)}</div> 
+				<div>ERROR: {this.parseErr(err)}</div> 
 			}
 
 			{!locked && !err && 
