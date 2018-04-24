@@ -22,7 +22,7 @@ export class App extends Component {
 	}
 
 	componentWillMount(){
-		this.props.load();
+		this.props.load("moscow", "ru");
 	}
 
 	parseErr(err){

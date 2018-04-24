@@ -1,65 +1,34 @@
 import api from '../../api';
+
 import {cache, setStorage} from 'promise-cache-decorator';
+import storage from 'promise-cache-decorator/lib/storage/localStorage';
+setStorage(storage);
 
 export const FORECAST_LOCK          = "FORECAST_LOCK";
 export const FORECAST_OK            = "FORECAST_OK";
 export const FORECAST_FAIL          = "FORECAST_FAIL";
 
-setStorage({
-    //@returns Promise
-    save : (id, value) => {
-        if (typeof localStorage != 'undefined') {
-            try {
-                localStorage.setItem("cache-" + id, value);
-                return Promise.resolve()
-            } catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return Promise.reject("localStorage is not defined")
-    },
+const _getWeather = (town, country) => {
+	const ts = Date.now();
+	return api.getWeather(town, country)
+			.then(res => {
+				res.data.ts = Date.now() - ts;
+				return res;
+			})	
+}
 
-    //@returns Promise
-    load : (id) => {
-        if (typeof localStorage != 'undefined') {
-            try {
-                const value = localStorage.getItem("cache-" + id)
-                return Promise.resolve(value==null?undefined:value);
-            } catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return Promise.reject("localStorage is not defined")
-    },
-
-    //@returns Promise
-    remove : (id) => {
-        if (typeof localStorage != 'undefined') {
-            try {
-                localStorage.removeItem("cache-" + id);
-                return Promise.resolve()
-            } catch (err) {
-                return Promise.reject(err);
-            }
-        }
-        return Promise.reject("localStorage is not defined")
-    },
-});
-
-
-const _cached_load = (dispatch) => {
+const _load = (dispatch, town, country) => {
 	return cache({
 		type:"age",
 		maxAge:20000,
 		id:"weather",
 		tardy : () => {dispatch({type:FORECAST_LOCK})},
 		tardy_timeout : 200
- 	})(api.getWeather.bind(this, dispatch))();
+ 	})(_getWeather)(town, country);
 }
 
-
-export const load = () => (dispatch, getState) => {
-	_cached_load(dispatch).then(res => {
+export const load = (town, country) => (dispatch, getState) => {
+	_load(dispatch, town, country).then(res => {
 		dispatch({type:FORECAST_OK, data:res.data});
 	})
   	.catch( err => {

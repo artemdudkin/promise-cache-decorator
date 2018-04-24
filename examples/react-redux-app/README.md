@@ -15,7 +15,7 @@ First time you will not see  table of weather forecast, but ajax-loader (for 5 s
 
 Also you can see item with key "cache-weather:[]" at localStorage.
 
-##Debug
+## Debug
 If you want to see all internals then compile at dev mode
 ```bash
 npm run dev
