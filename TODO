@@ -9,9 +9,6 @@ fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
 once-a-day validator pattern
 
-add sample (React) project (+redux)
-
-Add storage/localStorage 
 Add storage/lowdb
 Add tests for persistance adapters
 comment code (index.js)
