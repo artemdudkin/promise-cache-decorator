@@ -1,8 +1,10 @@
 
+? add settings: hasher for keys and serializer for values
+? add settings: local storage (different storages for different functions)
+
 ? test bluebird, q, etc.
 ? run Fibonacci test from memoizee
 ? add stats (look at memoizee)
-? add settings: hasher for keys and serializer for values
 
 fix windows 'npm run'
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
