@@ -25,9 +25,10 @@
     "file-loader": "^1.1.11",
     "postcss-loader": "^2.1.4",
     "precss": "^3.1.2",
-    "redux-logger": "^3.0.6",    
+    "redux-logger": "^3.0.6",
     "style-loader": "^0.21.0",
-    "webpack": "^4.6.0"
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.15"
   },
   "dependencies": {
     "axios": "^0.18.0",

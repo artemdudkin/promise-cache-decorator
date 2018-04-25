@@ -1,5 +1,5 @@
 import assert from "assert";
-const sinon = require("./es6_sinon");
+const sinon = require("./_es6_sinon");
 import {cache, init, set_load_all, set_save, invalidate_all, register_validator} from "../index";
 
 var loader_called = false;

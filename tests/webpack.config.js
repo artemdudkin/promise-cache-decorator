@@ -6,7 +6,7 @@ var webpack = require('webpack');
 module.exports = {
 	cache: true,
     entry: {
-		main : './es6'
+		main : './_es6'
 	},
 	output: {
 		filename: 'test_es6.js',

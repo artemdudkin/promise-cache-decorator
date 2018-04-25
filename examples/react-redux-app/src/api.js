@@ -5,7 +5,7 @@ const deferred = (func, delay) => {
         return new Promise((resolve, reject) => {
             setTimeout(function () {
                 const res = func.apply(this, rest);
-                if (!(res instanceof Promise)) {
+                if (typeof res.then != 'function') {
                     resolve( res );
                 } else {
                     res
