@@ -5,7 +5,6 @@
 ? add settings: hasher for keys and serializer for values
 
 fix windows 'npm run'
-fix problem - ES6 tests does not count at coverage
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
 once-a-day validator pattern
 

@@ -4,6 +4,7 @@ var path = require('path');
 var webpack = require('webpack');
 
 module.exports = {
+	mode:"development",
 	cache: true,
     entry: {
 		main : './_es6'
@@ -19,6 +20,13 @@ module.exports = {
 	resolveLoader: {
 		modules: ['node_modules']
 	},
+	externals : function(context, request, callback) {
+		if (['../index'].indexOf(request)!=-1){ // Do not inline this file (to count _es6.js tests at coverage)
+			callback(null, "commonjs " + request);
+		} else {
+			callback(); //inline all service files (used for ES6 transpillation)
+		}
+    },
 	module: {
 		rules: [{
 			test: /\.js$/,
