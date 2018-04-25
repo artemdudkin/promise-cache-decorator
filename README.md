@@ -87,7 +87,7 @@ const {cache, register_validator} = require('promise-cache-decorator');
 
 register_validator("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
-               // 'opt' is (optional) second parameter in cache call 
+               // 'opt' is first argument at cache() call (i.e. it is parameters of cache)
                // (see example with 'tardy' handler)
   return true; // 'true' mean that cache item is invalid
 });
