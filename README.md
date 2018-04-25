@@ -61,7 +61,7 @@ class API {
 
 ## Persistance
 
-Implemented only React-Native AsyncStorage by now.
+Implemented (1) browser's localStorage and (2) React-Native AsyncStorage by now.
 
 ```js
 const {cache, setStorage} = require('promise-cache-decorator');
@@ -69,15 +69,17 @@ const storage = require('promise-cache-decorator/lib/storage/asyncStorage');
 
 setStorage(storage);
 
-//1. you can do all things from previous example
-//2. also will try to load item from AsyncStorage on cache "get" if not exists
-//3. also will call save() on promise resolves (to save item to AsyncStorage)
+//1. will try to load() item from storage if cache's get() returns undefined
+//2. will call save() if promise resolves
+//3. will call remove() if item invalidated (including removing just after load if item is invalid)
 
 ```
+You can implement and use your own storage - just look at lib/storage folder for examples.
 
 ## Cache invalidation
 
 There are three strategies by default: (1) keep forever, (2) invalidate by timeout (see example above) and (3) update 'once-a-day' after given time of day (see tests for example).
+
 But you can add your own strategy:
 
 ```js
