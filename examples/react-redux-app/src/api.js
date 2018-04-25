@@ -1,5 +1,6 @@
 import axios from 'axios';
 
+//wait "delay" milliseconds and then call "func" function (ok with async functions)
 const deferred = (func, delay) => {
     return (...rest) => {
         return new Promise((resolve, reject) => {
