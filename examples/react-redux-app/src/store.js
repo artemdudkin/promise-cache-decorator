@@ -10,14 +10,14 @@ import thunk from 'redux-thunk';
 const middlewares = [thunk];
 
 if (typeof __DEV__ !== 'undefined' && __DEV__ === true) {
-    const createLogger = require('redux-logger').createLogger;
-    const logger = createLogger({
-        duration: true,
-        timestamp: false,
-        collapsed: true
-    });
+  const createLogger = require('redux-logger').createLogger;
+  const logger = createLogger({
+    duration: true,
+    timestamp: false,
+    collapsed: true
+  });
 
-    middlewares.push(logger);
+  middlewares.push(logger);
 }
 
 
@@ -26,14 +26,14 @@ if (typeof __DEV__ !== 'undefined' && __DEV__ === true) {
 //---------------------------------
 
 const NullReducer = (state = {}, action) => {
-      return state;
+  return state;
 }
 
 const createReducer = (asyncReducers) => {
   return combineReducers({
     null : NullReducer,	//we need at least one reducer from the scratch 
-                	    //to prevent warning "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
-			                //at the very first call (before any reducer added)
+                	//to prevent warning "Store does not have a valid reducer. Make sure the argument passed to combineReducers is an object whose values are reducers."
+			//at the very first call (before any reducer added)
     ...asyncReducers
   });
 }
@@ -43,11 +43,11 @@ const createReducer = (asyncReducers) => {
 //---------------------------------
 
 const store = createStore(
-    createReducer(), 
-    {},
-    compose(
-        applyMiddleware(...middlewares)
-    )
+  createReducer(), 
+  {},
+  compose(
+    applyMiddleware(...middlewares)
+  )
 );
 
 store.asyncReducers = {};
