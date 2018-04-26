@@ -1,4 +1,3 @@
-
 ? add settings: hasher for keys and serializer for values
 ? add settings: local storage (different storages for different functions)
 
