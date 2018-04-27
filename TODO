@@ -1,5 +1,5 @@
 ? add settings: hasher for keys and serializer for values
-? add settings: local storage (different storages for different functions)
+? add settings: different storages for different functions
 
 ? test bluebird, q, etc.
 ? run Fibonacci test from memoizee
