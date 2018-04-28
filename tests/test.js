@@ -1,4 +1,5 @@
 const assert = require("assert");
+const sinon = require("sinon");
 const {cache, invalidate_all, register_validator} = require("../index");
 
 var deferred = (func, delay) => {
@@ -400,6 +401,40 @@ describe('vanilla js decorator', function(){
             assert.ok(result.fired, "original func should be fired second time");
             assert.deepEqual([{a:10, b:1}], result.args);
             done()
+        }).catch(done)
+    })
+
+
+    it('should not find cache item if id is number', (done)=>{
+        var fired = false;
+        var p1 = (...rest) => {
+            fired=true;
+            return Promise.resolve(2);
+        }
+        var pp1 = cache({type:"forever", id:"1"})(p1);
+        var pp2 = cache({type:"forever", id:1})(p1);
+
+        pp1(42)
+        .then(res=>{
+            assert.equal(res, 2);
+            assert.ok(fired, "should call func for the first time");
+        })
+        .then(res=>{
+            fired = false;
+            return pp1(42);
+        })        
+        .then(res=>{
+            assert.equal(res, 2);
+            assert.ok(!fired, "should NOT call func for the second time");
+        })
+        .then(res=>{
+            fired = false;
+            return pp2(42);
+        })        
+        .then(res=>{
+            assert.equal(res, 2);
+            assert.ok(fired, "should call func for the third time");
+            done();
         }).catch(done)
     })
 

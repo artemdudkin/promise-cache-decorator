@@ -298,10 +298,15 @@ describe('storage', function(){
 
         pp({a:4,b:5})
         .then(res=>{
-            assert.equal("ERROR: cannot save(qwe:[{\"a\":4,\"b\":5}]) to storage: err", console.error.getCall(0).args[0]);
             assert.ok(_fired);
             assert.equal(8, res);
-
+        })
+        .then(res=>{
+            //wait 100ms because cache.put (where error will throw) is in different promise
+            return new Promise((resolve) => setTimeout(resolve, 100))
+        })
+        .then(res=>{
+            assert.equal("ERROR: cannot save(qwe:[{\"a\":4,\"b\":5}]) to storage: err", console.error.getCall(0).args[0]);
             console.error.restore();
             done();
         }).catch(err => {
