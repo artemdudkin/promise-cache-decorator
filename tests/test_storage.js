@@ -33,6 +33,10 @@ describe('storage', function(){
         invalidate_all();
     });
 
+    afterEach(function(){
+        if (console.error.isSinonProxy) console.error.restore();
+    })
+
     it('should have "save", "load", "remove"', ()=>{
         assert.throws(
             () => { setStorage() },
@@ -67,7 +71,7 @@ describe('storage', function(){
             /^Error: cache storage "remove" method should be function$/);
     });
 
-    it('should hit after cache load', (done)=>{
+    it('should hit after cache load', ()=>{
         setStorage({
             load : (id) => {
                 return deferred(()=>{
@@ -84,16 +88,15 @@ describe('storage', function(){
 
         var pp = cache({type:"forever", id:"123"})(p);
         
-        pp({a:1,b:2})
+        return pp({a:1,b:2})
         .then(res=>{
             assert.equal( 33, res.sum);
             assert.equal( 11, res.a);
             assert.equal( 22, res.b);
-            done();
-        }).catch(done)
+        })
     })
 
-    it('should miss after cache load with old data', (done)=>{
+    it('should miss after cache load with old data', ()=>{
         setStorage({
             load : (id) => {
                 let value;
@@ -108,16 +111,15 @@ describe('storage', function(){
 
         var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
 
-        pp({a:1,b:2})
+        return pp({a:1,b:2})
         .then(res=>{
             assert.equal( 3, res.sum);
             assert.equal( 1, res.a);
             assert.equal( 2, res.b);
-            done();
-        }).catch(done)
+        })
     })    
 
-    it('should save after cache put', (done)=>{
+    it('should save after cache put', ()=>{
         var _id;
         var _value;
         var _fired = false;
@@ -133,16 +135,15 @@ describe('storage', function(){
 
         var pp = cache({type:"forever", id:"qaz"})(p);
 
-        pp({a:3,b:4})
+        return pp({a:3,b:4})
         .then(res=>{
             assert.ok( _fired, "save found be fired");
             assert.equal( _id, 'qaz:[{"a":3,"b":4}]');
             assert.deepEqual( {a:3, b:4, sum:7}, JSON.parse(_value).value);
-            done();
-        }).catch(done)
+        })
     })
 
-    it('should "remove" after load invalid cache item', (done)=>{
+    it('should "remove" after load invalid cache item', ()=>{
         var _remove_fired=false;
         var _load_fired=false;
         var _load_result=false;
@@ -170,18 +171,17 @@ describe('storage', function(){
         }
         var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
 
-        pp({a:1,b:2})
+        return pp({a:1,b:2})
         .then(res=>{
             assert.ok(_load_fired, "storage 'load' should be fired");
             assert.deepEqual({a:1, b:2, sum:3}, JSON.parse(_load_result).value);
 
             assert.ok(_remove_fired, "storage 'remove' should be fired");
             assert.equal("123", res);
-            done();
-        }).catch(done)
+        })
     })
 
-    it('should "remove" after cache item invalidated', (done)=>{
+    it('should "remove" after cache item invalidated', ()=>{
         var _removed_id;
         var _saved_id;
         setStorage({
@@ -199,7 +199,7 @@ describe('storage', function(){
         var pp = cache({type:"age", maxAge:500, id:"abc"})(p);
         var pp_id = 'abc:'+JSON.stringify([{a:1, b:2}]);
 
-        pp({a:1,b:2})
+        return pp({a:1,b:2})
         .then(res=>{
             assert.equal(pp_id, _saved_id);
             assert.equal("undefined", typeof _removed_id);
@@ -220,11 +220,10 @@ describe('storage', function(){
         .then(res=>{
             assert.equal(pp_id, _saved_id);
             assert.equal(pp_id, _removed_id);
-            done();
-        }).catch(done)
+        })
     })
 
-    it('should console.error if cannot parse item from storage', (done)=>{
+    it('should console.error if cannot parse item from storage', ()=>{
         sinon.spy(console, "error");
 
         setStorage({
@@ -235,21 +234,15 @@ describe('storage', function(){
 
         var pp = cache({type:"forever"})(p);
 
-        pp({a:3,b:4})
+        return pp({a:3,b:4})
         .then(res=>{
             assert.equal(7, res.sum);
             assert.ok(console.error.calledOnce);
-            assert.equal("Can not parse json '{123'", console.error.getCall(0).args[0]);
-
-            console.error.restore();
-            done();
-        }).catch(err => {
-            console.error.restore();
-            done(err);
+            assert.equal("ERROR: Can not parse json '{123'", console.error.getCall(0).args[0]);
         })
     })
 
-    it('should start original func if "load" Promise is rejected (+console.error)', (done)=>{
+    it('should start original func if "load" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
         setStorage({
@@ -265,22 +258,16 @@ describe('storage', function(){
         }
         var pp = cache({type:"forever", id:"qwe"})(_p);
 
-        pp({a:3,b:4})
+        return pp({a:3,b:4})
         .then(res=>{
             assert.equal("ERROR: cannot load(qwe:[{\"a\":3,\"b\":4}]) from storage: err", console.error.getCall(0).args[0]);
             assert.ok(_fired);
             assert.equal(7, res);
-
-            console.error.restore();
-            done();
-        }).catch(err => {
-            console.error.restore();
-            done(err);
         })
     })    
 
 
-    it('should work if "save" Promise is rejected (+console.error)', (done)=>{
+    it('should work if "save" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
         setStorage({
@@ -296,7 +283,7 @@ describe('storage', function(){
         }
         var pp = cache({type:"forever", id:"qwe"})(_p);
 
-        pp({a:4,b:5})
+        return pp({a:4,b:5})
         .then(res=>{
             assert.ok(_fired);
             assert.equal(8, res);
@@ -307,16 +294,11 @@ describe('storage', function(){
         })
         .then(res=>{
             assert.equal("ERROR: cannot save(qwe:[{\"a\":4,\"b\":5}]) to storage: err", console.error.getCall(0).args[0]);
-            console.error.restore();
-            done();
-        }).catch(err => {
-            console.error.restore();
-            done(err);
         })
     })    
 
 
-    it('should work if "remove" Promise is rejected on cache ivalidated (+console.error)', (done)=>{
+    it('should work if "remove" Promise is rejected on cache ivalidated (+console.error)', ()=>{
         sinon.spy(console, "error");
 
         setStorage({
@@ -332,7 +314,7 @@ describe('storage', function(){
         }
         var pp = cache({type:"age", maxAge:500, id:"qwe"})(_p);
 
-        pp({a:5,b:6})
+        return pp({a:5,b:6})
         .then(res=>{
             assert.equal( 0, console.error.callCount);
             assert.ok(_fired);
@@ -348,12 +330,6 @@ describe('storage', function(){
             assert.equal("ERROR: cannot remove(qwe:[{\"a\":5,\"b\":6}]) from storage: err", console.error.getCall(0).args[0]);
             assert.ok(_fired);
             assert.equal(8, res);
-
-            console.error.restore();
-            done();
-        }).catch(err => {
-            console.error.restore();
-            done(err);
         })
     })    
     

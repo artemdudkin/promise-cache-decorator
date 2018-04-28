@@ -53,11 +53,11 @@ describe('es6 decorator', function(){
         loader_called = false;
     });
 
-    it('should miss and hit on cached forever', (done)=> {
+    it('should miss and hit on cached forever', ()=> {
         const a = new A();
 
         var start = Date.now();
-        a.get({a:1,b:2})
+        return a.get({a:1,b:2})
         .then(res=>{
             let delta = Date.now() - start;
             assert.ok( delta > 1900 && delta < 3000, "cache miss should be greater 2000 while it is " + delta);
@@ -71,17 +71,16 @@ describe('es6 decorator', function(){
             let delta = Date.now() - start;
             assert.ok( delta < 100, "cache hit should be less then 100 while it is " + delta);
             assert.ok( !loader_called, "should not start 'tardy' on second call");
-            done();
-        }).catch(done);
+        });
     })    
 
-    it('should console.error if tardy method does not exist', (done)=> {
+    it('should console.error if tardy method does not exist', ()=> {
         sinon.spy(console, "error");
 
         const b = new A();
 
         var start = Date.now();
-        b.get2({a:1,b:2})
+        return b.get2({a:1,b:2})
         .then(res=>{
             let delta = Date.now() - start;
             assert.ok( delta > 900 && delta < 12000, "cache miss should be greater 500 while it is " + delta);
@@ -90,10 +89,8 @@ describe('es6 decorator', function(){
             assert.equal("ERROR: cannot find tardy handler [show_loader_2]", console.error.getCall(0).args[0]);
 
             console.error.restore();
-            done();
         }).catch(err => {
             console.error.restore();
-            done(err);
         });
     })    
 })

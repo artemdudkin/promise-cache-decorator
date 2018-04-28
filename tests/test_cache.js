@@ -23,8 +23,8 @@ describe('cache', function(){
     })
 
 
-    it('put + get + delete + get', (done)=> {
-        put("forever", "a", 1)
+    it('put + get + delete + get', ()=> {
+        return put("forever", "a", 1)
         .then(()=>{
           return get("forever", "a");
         }).then(res => {
@@ -35,8 +35,6 @@ describe('cache', function(){
             return get("forever", "a");
         }).then(res => {
             assert.equal( undefined, res);
-        }).then(res=>{
-            done();
-        }).catch(done)
+        })
     })
 })

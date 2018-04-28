@@ -1,3 +1,5 @@
+tests for storage which methods returns not Promise (esp. load)
+
 ? add settings: hasher for keys and serializer for values
 ? add settings: different storages for different functions
 
