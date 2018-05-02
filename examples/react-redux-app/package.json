@@ -32,6 +32,7 @@
   },
   "dependencies": {
     "axios": "^0.18.0",
+    "delay-promise-func": "0.0.2",
     "lodash.get": "^4.4.2",
     "promise-cache-decorator": "^0.2.15",
     "react": "^16.3.2",

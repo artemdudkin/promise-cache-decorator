@@ -1,16 +1,8 @@
 const assert = require("assert");
 const sinon = require("sinon");
 const {cache, invalidate_all, register_validator} = require("../index");
+var deferred = require("delay-promise-func");
 
-var deferred = (func, delay) => {
-    return (...rest) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(function () {
-                resolve( func.apply(this, rest) );
-            }, delay);
-        })
-    }
-}
 var p_func = (data) => {
     if (data.a && data.b) data.sum=data.a + data.b;
     return data;

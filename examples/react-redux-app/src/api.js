@@ -1,32 +1,5 @@
 import axios from 'axios';
-
-/** Waits a bit and then call function
- *
- * @param {Function} func - function to call
- * @param {number} delay - delay in milliseconds
- *
- * @returns Promise
- */
-const deferred = (func, delay) => {
-    return (...rest) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(function () {
-                const res = func.apply(this, rest);
-                if (typeof res.then != 'function') {
-                    resolve( res );
-                } else {
-                    res
-                    .then(res=>{
-                        resolve(res);
-                    })
-                    .catch(err=>{
-                        reject(err);
-                    })
-                }
-            }, delay);
-        })
-    }
-}
+import delayed from 'delay-promise-func';
 
 const getWeather = (town, country) => {
          return axios({
@@ -37,5 +10,5 @@ const getWeather = (town, country) => {
 }
 
 export default {
-    getWeather : deferred(getWeather, 3000)
+    getWeather : delayed(getWeather, 3000)
 }

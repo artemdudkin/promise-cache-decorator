@@ -1,5 +1,6 @@
 const assert = require("assert");
 const sinon = require("sinon");
+var deferred = require("delay-promise-func");
 const {cache, invalidate_all, setStorage} = require("../index");
 
 var p = (data) => {
@@ -14,17 +15,6 @@ var wait1s = (data) => {
         }, 1000);
     })
 }
-
-var deferred = (func, delay) => {
-    return (...rest) => {
-        return new Promise((resolve, reject) => {
-            setTimeout(function () {
-                resolve( func.apply(this, rest) );
-            }, delay);
-        })
-    }
-}
-
 
 describe('storage', function(){
     this.timeout(300 * 1000);
