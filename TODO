@@ -1,4 +1,5 @@
 tests for storage which methods returns not Promise (esp. load)
+invalidate_all cannot clean all storages
 
 ? add settings: hasher for keys and serializer for values
 ? add settings: different storages for different functions

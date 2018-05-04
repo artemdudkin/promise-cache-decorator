@@ -1,7 +1,7 @@
 const assert = require("assert");
 const sinon = require("sinon");
 var deferred = require("delay-promise-func");
-const {cache, invalidate_all, setStorage} = require("../index");
+const {cache, invalidate_all, setSettings, restoreDefaultSettings} = require("../index");
 
 var p = (data) => {
     if (data.a && data.b) data.sum=data.a + data.b;
@@ -19,50 +19,14 @@ var wait1s = (data) => {
 describe('storage', function(){
     this.timeout(300 * 1000);
 
-    beforeEach(function(){
-        invalidate_all();
-    });
-
     afterEach(function(){
+        restoreDefaultSettings();
+        invalidate_all();
         if (console.error.isSinonProxy) console.error.restore();
     })
 
-    it('should have "save", "load", "remove"', ()=>{
-        assert.throws(
-            () => { setStorage() },
-            /^Error: cache storage should be object$/);
-
-        assert.throws(
-            () => { setStorage(1) },
-            /^Error: cache storage should be object$/);
-    
-        assert.throws(
-            () => { setStorage({}) },
-            /^Error: cache storage "save" method should be function$/);
-
-        assert.throws(
-            () => { setStorage({ save: {} }) },
-            /^Error: cache storage "save" method should be function$/);
-
-        assert.throws(
-            () => { setStorage({ save: () => { } }) },
-            /^Error: cache storage "load" method should be function$/);
-
-        assert.throws(
-            () => { setStorage({ save: () => { }, load: {} }) },
-            /^Error: cache storage "load" method should be function$/);
-
-        assert.throws(
-            () => { setStorage({ save: () => { }, load: () => { } }) },
-            /^Error: cache storage "remove" method should be function$/);
-
-        assert.throws(
-            () => { setStorage({ save: () => { }, load: () => { }, remove: {} }) },
-            /^Error: cache storage "remove" method should be function$/);
-    });
-
     it('should hit after cache load', ()=>{
-        setStorage({
+        setSettings({storage:{
             load : (id) => {
                 return deferred(()=>{
                     let value;
@@ -74,7 +38,7 @@ describe('storage', function(){
             },
             save : () => { return Promise.resolve()},
             remove : () => {   return Promise.resolve()},
-        });
+        }});
 
         var pp = cache({type:"forever", id:"123"})(p);
         
@@ -87,7 +51,7 @@ describe('storage', function(){
     })
 
     it('should miss after cache load with old data', ()=>{
-        setStorage({
+        setSettings({storage:{
             load : (id) => {
                 let value;
                 if (id === 'abc:'+JSON.stringify([{a:1, b:2}])) {
@@ -97,7 +61,7 @@ describe('storage', function(){
             },
             save : () => {return Promise.resolve()},
             remove : () => {return Promise.resolve()},
-        });
+        }});
 
         var pp = cache({type:"age", maxAge:1000, id:"abc"})(p);
 
@@ -113,7 +77,7 @@ describe('storage', function(){
         var _id;
         var _value;
         var _fired = false;
-        setStorage({
+        setSettings({storage:{
             save : (id, value)=>{
                 _id = id;
                 _value = value;
@@ -121,7 +85,7 @@ describe('storage', function(){
             },
             load : () => {return Promise.resolve()},
             remove : () => {return Promise.resolve()},
-        });
+        }});
 
         var pp = cache({type:"forever", id:"qaz"})(p);
 
@@ -137,7 +101,7 @@ describe('storage', function(){
         var _remove_fired=false;
         var _load_fired=false;
         var _load_result=false;
-        setStorage({
+        setSettings({storage:{
             load : (id) => {
                 _load_fired = true;
                 let value;
@@ -152,7 +116,7 @@ describe('storage', function(){
                 _remove_fired=true;
                 return Promise.resolve()
             },
-        });
+        }});
 
         var _promise_fired = false;
         var p = () => {
@@ -174,7 +138,7 @@ describe('storage', function(){
     it('should "remove" after cache item invalidated', ()=>{
         var _removed_id;
         var _saved_id;
-        setStorage({
+        setSettings({storage:{
             load : (id) => {return Promise.resolve()},
             save : (id) => {
                 _saved_id = id;
@@ -184,7 +148,7 @@ describe('storage', function(){
                 _removed_id=id;
                 return Promise.resolve()
             },
-        });
+        }});
 
         var pp = cache({type:"age", maxAge:500, id:"abc"})(p);
         var pp_id = 'abc:'+JSON.stringify([{a:1, b:2}]);
@@ -216,11 +180,11 @@ describe('storage', function(){
     it('should console.error if cannot parse item from storage', ()=>{
         sinon.spy(console, "error");
 
-        setStorage({
+        setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : () => {return Promise.resolve("{123")},
             remove : () => {return Promise.resolve()},
-        });
+        }});
 
         var pp = cache({type:"forever"})(p);
 
@@ -235,11 +199,11 @@ describe('storage', function(){
     it('should start original func if "load" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setStorage({
+        setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.reject("err")},
             remove : () => {return Promise.resolve()},
-        });
+        }});
 
         var _fired = false;
         var _p = () =>{
@@ -260,11 +224,11 @@ describe('storage', function(){
     it('should work if "save" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setStorage({
+        setSettings({storage:{
             save : ()=>{return Promise.reject("err")},
             load : (id) => {return Promise.resolve()},
             remove : () => {return Promise.resolve()},
-        });
+        }});
 
         var _fired = false;
         var _p = () =>{
@@ -291,11 +255,11 @@ describe('storage', function(){
     it('should work if "remove" Promise is rejected on cache ivalidated (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setStorage({
+        setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.resolve()},
             remove : () => {return Promise.reject("err")},
-        });
+        }});
 
         var _fired = false;
         var _p = () =>{

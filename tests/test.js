@@ -1,23 +1,21 @@
 const assert = require("assert");
 const sinon = require("sinon");
-const {cache, invalidate_all, register_validator} = require("../index");
-var deferred = require("delay-promise-func");
+const {cache, restoreDefaultSettings, invalidate_all, register_validator} = require("../index");
+var delayed = require("delay-promise-func");
 
 var p_func = (data) => {
     if (data.a && data.b) data.sum=data.a + data.b;
     return data;
 }
-var p = deferred(p_func, 2000);
+var p = delayed(p_func, 2000);
 
 
 describe('vanilla js decorator', function(){
     this.timeout(300 * 1000);
 
-    beforeEach(function(){
-        invalidate_all();
-    });
-
     afterEach(function(){
+        invalidate_all();
+        restoreDefaultSettings();
         if (console.error.isSinonProxy) console.error.restore();
     })
 
@@ -58,7 +56,7 @@ describe('vanilla js decorator', function(){
 
 
     it('should miss and hit on cached forever @ Promise.all', ()=> {
-        var p2 = deferred(()=>1, 4000);
+        var p2 = delayed(()=>1, 4000);
 
         var p3 = (data) => {
             return Promise.all([p(data), p2()]);
@@ -225,7 +223,7 @@ describe('vanilla js decorator', function(){
 
     it("should not fire 'tardy' on fast promises", ()=> {
         var fired = false;
-        var p = deferred(p_func, 500);
+        var p = delayed(p_func, 500);
         var pp = cache({
             tardy:()=>{
                 fired=true;
@@ -269,14 +267,14 @@ describe('vanilla js decorator', function(){
     it('should return same promise for two almost simultaneous function calls', ()=>{
         var count = 0;
         var p1 = () => {return ++count}
-        var dp1 = deferred(p1, 2000);
+        var dp1 = delayed(p1, 2000);
         var pp = cache("forever")(dp1);
 
         var start = Date.now();
         return dp1()
         .then(res=>{
             let delta = Date.now() - start;
-            assert.ok( delta > 1900 && delta < 2100, "deferred(p1, 2000) should fire in 2 seconds ["+delta+"]");
+            assert.ok( delta > 1900 && delta < 2100, "delayed(p1, 2000) should fire in 2 seconds ["+delta+"]");
             assert.equal(1, res);
         })
         .then(res=>{
@@ -286,7 +284,7 @@ describe('vanilla js decorator', function(){
             assert.equal(2, res);
         })
         .then(res=>{
-            var dpp = deferred(pp, 200);
+            var dpp = delayed(pp, 200);
             return Promise.all([pp(), dpp()]);
         })
         .then(res=>{
@@ -298,7 +296,7 @@ describe('vanilla js decorator', function(){
     it('should return different data from cache for different functions even if it have the same input data', ()=>{
         var count = 0;
         var p1_func = () => {return ++count}
-        var p1 = deferred(p1_func, 2000);
+        var p1 = delayed(p1_func, 2000);
         var pp1 = cache("forever")(p1);
 
         var pp = cache("forever")(p);

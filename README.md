@@ -64,10 +64,10 @@ class API {
 Implemented (1) browser's localStorage and (2) React-Native AsyncStorage by now.
 
 ```js
-const {cache, setStorage} = require('promise-cache-decorator');
+const {cache, setSettings} = require('promise-cache-decorator');
 const storage = require('promise-cache-decorator/lib/storage/asyncStorage');
 
-setStorage(storage);
+setSettings({storage:storage});
 
 //1. will try to load() item from storage if cache's get() returns undefined
 //2. will call save() if promise resolves

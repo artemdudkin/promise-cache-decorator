@@ -1,12 +1,13 @@
 const assert = require("assert");
 const {put, get, remove, invalidate_all} = require("../lib/cache");
+const {getSettings} = require("../lib/settings");
 
 
 
 describe('cache', function(){
     this.timeout(300 * 1000);
 
-    beforeEach(function(){
+    afterEach(function(){
         invalidate_all();
     });
 
@@ -24,15 +25,17 @@ describe('cache', function(){
 
 
     it('put + get + delete + get', ()=> {
-        return put("forever", "a", 1)
+        const opt = Object.assign({}, getSettings());
+
+        return put(opt, "a", 1)
         .then(()=>{
-          return get("forever", "a");
+          return get(opt, "a");
         }).then(res => {
             assert.equal( 1, res);
         }).then(res => {
-            return remove("forever", "a");
+            return remove(opt, "a");
         }).then(()=>{
-            return get("forever", "a");
+            return get(opt, "a");
         }).then(res => {
             assert.equal( undefined, res);
         })

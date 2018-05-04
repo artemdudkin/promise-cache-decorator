@@ -1,6 +1,6 @@
 import assert from "assert";
 const sinon = require("./_es6_sinon");
-import {cache, init, set_load_all, set_save, invalidate_all, register_validator} from "../index";
+import {cache, restoreDefaultSettings, invalidate_all} from "../index";
 
 var loader_called = false;
 
@@ -49,8 +49,12 @@ describe('es6 decorator', function(){
     this.timeout(300 * 1000);
 
     beforeEach(function(){
-        invalidate_all();
         loader_called = false;
+    })
+
+    afterEach(function(){
+        restoreDefaultSettings();
+        invalidate_all();
     });
 
     it('should miss and hit on cached forever', ()=> {

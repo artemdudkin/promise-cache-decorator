@@ -2,7 +2,7 @@
   "author": "Artem Dudkin <sheeva@list.ru>",
   "name": "promise-cache-decorator",
   "license": "MIT",
-  "version": "0.2.16",
+  "version": "0.2.17",
   "repository": {
     "type": "git",
     "url": "git@github.com:artemdudkin/promise-cache-decorator.git"
@@ -19,7 +19,7 @@
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "chai": "^4.1.2",
     "coveralls": "^3.0.1",
-    "delay-promise-func": "0.0.2",
+    "delay-promise-func": "0.0.4",
     "istanbul": "^0.4.5",
     "mocha": "^5.1.1",
     "mocha-lcov-reporter": "^1.2.0",
@@ -28,7 +28,8 @@
     "webpack-cli": "^2.1.2"
   },
   "dependencies": {
-    "circular-json": "^0.5.3"
+    "circular-json": "^0.5.3",
+    "promisify-func": "0.0.3"
   },
   "keywords": [
     "cache",

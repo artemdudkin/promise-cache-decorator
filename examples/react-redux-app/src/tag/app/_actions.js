@@ -1,8 +1,8 @@
 import api from '../../api';
 
-import {cache, setStorage} from 'promise-cache-decorator';
+import {cache, setSettings} from 'promise-cache-decorator';
 import storage from 'promise-cache-decorator/lib/storage/localStorage';
-setStorage(storage);
+setSettings({storage});
 
 export const FORECAST_LOCK          = "FORECAST_LOCK";
 export const FORECAST_OK            = "FORECAST_OK";
