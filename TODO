@@ -1,6 +1,7 @@
 tests for storage which methods returns not Promise (esp. load)
 invalidate_all cannot clean all storages
 tests for non-global storage etc.
+lru cache invalidator
 
 ? add settings: hasher for keys and serializer for values
 
