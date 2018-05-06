@@ -1,13 +1,15 @@
 tests for storage which methods returns not Promise (esp. load)
 invalidate_all cannot clean all storages
+? rename invalidate_all to clear
 tests for non-global storage etc.
 lru cache invalidator
+add cache.validator.register and cache.validator.unregister
 
 ? add settings: hasher for keys and serializer for values
 
 ? test bluebird, q, etc.
 ? run Fibonacci test from memoizee
-? add stats (look at memoizee)
+? add stats (look at memoizee or mem)
 
 fix windows 'npm run'
 fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
