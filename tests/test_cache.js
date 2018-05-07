@@ -1,5 +1,5 @@
 const assert = require("assert");
-const {put, get, remove, invalidate_all} = require("../lib/cache");
+const {put, get, remove, clear} = require("../lib/cache");
 const {getSettings} = require("../lib/settings");
 
 
@@ -8,7 +8,7 @@ describe('cache', function(){
     this.timeout(300 * 1000);
 
     afterEach(function(){
-        invalidate_all();
+        clear();
     });
 
     it('cache key sould be string @ put', ()=> {

@@ -1,6 +1,6 @@
 const assert = require("assert");
 const sinon = require("sinon");
-const {cache, restoreDefaultSettings, invalidate_all, register_validator} = require("../index");
+const cache = require("../index");
 var delayed = require("delay-promise-func");
 
 var p_func = (data) => {
@@ -14,8 +14,8 @@ describe('vanilla js decorator', function(){
     this.timeout(300 * 1000);
 
     afterEach(function(){
-        invalidate_all();
-        restoreDefaultSettings();
+        cache.restoreDefaultSettings();
+        cache.clear();
         if (console.error.isSinonProxy) console.error.restore();
     })
 
@@ -120,7 +120,7 @@ describe('vanilla js decorator', function(){
     })
 
     it('should miss and miss on always-miss-validator', ()=>{
-        register_validator("always-miss", function invalid(item, opt){
+        cache.validator.register("always-miss", function invalid(item, opt){
             return true;
         });
 
@@ -197,7 +197,7 @@ describe('vanilla js decorator', function(){
         }).then(res=>{
             assert.ok(!fired, "'tardy' should not be fired second time");
         }).then(res=>{
-            invalidate_all();
+            cache.clear();
 
             start = Date.now();
             fired=false;

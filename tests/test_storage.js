@@ -1,7 +1,7 @@
 const assert = require("assert");
 const sinon = require("sinon");
 var deferred = require("delay-promise-func");
-const {cache, invalidate_all, setSettings, restoreDefaultSettings} = require("../index");
+const cache = require("../index");
 
 var p = (data) => {
     if (data.a && data.b) data.sum=data.a + data.b;
@@ -20,13 +20,13 @@ describe('storage', function(){
     this.timeout(300 * 1000);
 
     afterEach(function(){
-        restoreDefaultSettings();
-        invalidate_all();
+        cache.restoreDefaultSettings();
+        cache.clear();
         if (console.error.isSinonProxy) console.error.restore();
     })
 
     it('should hit after cache load', ()=>{
-        setSettings({storage:{
+        cache.setSettings({storage:{
             load : (id) => {
                 return deferred(()=>{
                     let value;
@@ -51,7 +51,7 @@ describe('storage', function(){
     })
 
     it('should miss after cache load with old data', ()=>{
-        setSettings({storage:{
+        cache.setSettings({storage:{
             load : (id) => {
                 let value;
                 if (id === 'abc:'+JSON.stringify([{a:1, b:2}])) {
@@ -77,7 +77,7 @@ describe('storage', function(){
         var _id;
         var _value;
         var _fired = false;
-        setSettings({storage:{
+        cache.setSettings({storage:{
             save : (id, value)=>{
                 _id = id;
                 _value = value;
@@ -101,7 +101,7 @@ describe('storage', function(){
         var _remove_fired=false;
         var _load_fired=false;
         var _load_result=false;
-        setSettings({storage:{
+        cache.setSettings({storage:{
             load : (id) => {
                 _load_fired = true;
                 let value;
@@ -138,7 +138,7 @@ describe('storage', function(){
     it('should "remove" after cache item invalidated', ()=>{
         var _removed_id;
         var _saved_id;
-        setSettings({storage:{
+        cache.setSettings({storage:{
             load : (id) => {return Promise.resolve()},
             save : (id) => {
                 _saved_id = id;
@@ -180,7 +180,7 @@ describe('storage', function(){
     it('should console.error if cannot parse item from storage', ()=>{
         sinon.spy(console, "error");
 
-        setSettings({storage:{
+        cache.setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : () => {return Promise.resolve("{123")},
             remove : () => {return Promise.resolve()},
@@ -199,7 +199,7 @@ describe('storage', function(){
     it('should start original func if "load" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setSettings({storage:{
+        cache.setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.reject("err")},
             remove : () => {return Promise.resolve()},
@@ -224,7 +224,7 @@ describe('storage', function(){
     it('should work if "save" Promise is rejected (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setSettings({storage:{
+        cache.setSettings({storage:{
             save : ()=>{return Promise.reject("err")},
             load : (id) => {return Promise.resolve()},
             remove : () => {return Promise.resolve()},
@@ -255,7 +255,7 @@ describe('storage', function(){
     it('should work if "remove" Promise is rejected on cache ivalidated (+console.error)', ()=>{
         sinon.spy(console, "error");
 
-        setSettings({storage:{
+        cache.setSettings({storage:{
             save : ()=>{return Promise.resolve()},
             load : (id) => {return Promise.resolve()},
             remove : () => {return Promise.reject("err")},

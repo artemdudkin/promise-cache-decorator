@@ -7,7 +7,7 @@ Memoizes async functions (i.e. caches promises), with persistence, and cache inv
 ## Example (and loader)
 
 ```js
-const {cache} = require('promise-cache-decorator');
+const cache = require('promise-cache-decorator');
 
 const p = (url) => require('axios').get(url);
 
@@ -38,7 +38,7 @@ cached_by_5_mins_showing_loader_on_slow_requests('http://apidev.accuweather.com/
 
 ## ES6 notation
 ```js
-import {cache} from 'promise-cache-decorator';
+import cache from 'promise-cache-decorator';
 import axios from 'axios';
 
 class API {
@@ -64,10 +64,10 @@ class API {
 Implemented (1) browser's localStorage and (2) React-Native AsyncStorage by now.
 
 ```js
-const {cache, setSettings} = require('promise-cache-decorator');
+const cache = require('promise-cache-decorator');
 const storage = require('promise-cache-decorator/lib/storage/asyncStorage');
 
-setSettings({storage:storage});
+cache.setSettings({storage:storage});
 
 //1. will try to load() item from storage if cache's get() returns undefined
 //2. will call save() if promise resolves
@@ -83,9 +83,9 @@ There are three strategies by default: (1) keep forever, (2) invalidate by timeo
 But you can add your own strategy:
 
 ```js
-const {cache, register_validator} = require('promise-cache-decorator');
+const cache = require('promise-cache-decorator');
 
-register_validator("always-miss", function invalid(item, opt){
+cache.validator.register("always-miss", function invalid(item, opt){
                // 'item' is cache item (like {value:3, ts:1523047229332})
                // 'opt' is first argument at cache() call (i.e. it is parameters of cache)
                // (see example with 'tardy' handler)

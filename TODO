@@ -1,9 +1,9 @@
 tests for storage which methods returns not Promise (esp. load)
-invalidate_all cannot clean all storages
-? rename invalidate_all to clear
 tests for non-global storage etc.
 lru cache invalidator
-add cache.validator.register and cache.validator.unregister
+
+fix *.d.ts ("any" type for all)
+clear() cannot clean all storages
 
 ? add settings: hasher for keys and serializer for values
 

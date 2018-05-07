@@ -40,6 +40,8 @@ describe('validator', function(){
         assert.ok( !validator.isExists("xxx"), "xxx does not exists");
         validator.register("xxx", ()=>true);
         assert.ok( validator.isExists("xxx"), "xxx now exists");
+        validator.unregister("xxx");
+        assert.ok( !validator.isExists("xxx"), "xxx not exists again");
     })
 
 })
