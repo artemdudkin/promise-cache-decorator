@@ -13,7 +13,6 @@ clear() cannot clean all storages
 ? add stats (look at memoizee or mem)
 
 fix windows 'npm run'
-fix problem - "UnhandledPromiseRejectionWarning" @ rejected promise test
 once-a-day validator pattern
 
 Add storage/lowdb
