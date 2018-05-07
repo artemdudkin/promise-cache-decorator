@@ -67,7 +67,7 @@ Implemented (1) browser's localStorage and (2) React-Native AsyncStorage by now.
 const cache = require('promise-cache-decorator');
 const storage = require('promise-cache-decorator/lib/storage/asyncStorage');
 
-cache.setSettings({storage:storage});
+cache.setSettings({storage});
 
 //1. will try to load() item from storage if cache's get() returns undefined
 //2. will call save() if promise resolves
