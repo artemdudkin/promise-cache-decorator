@@ -124,7 +124,7 @@ describe('validator:once-a-day', function(){
         var dt = new Date( (new Date()).getTime() + 3000);  //update time is in 3 seconds
         var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
-        const missed = invalid({ts}, {time});
+        const missed = invalid({time}, {ts});
         assert.ok( !missed);
     })
 
@@ -134,7 +134,7 @@ describe('validator:once-a-day', function(){
         var dt = new Date( (new Date()).getTime() - 3000);  //update time is 3 seconds ago
         var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
-        const missed = invalid({ts}, {time});
+        const missed = invalid({time}, {ts});
         assert.ok( missed);
     })
 
@@ -144,7 +144,7 @@ describe('validator:once-a-day', function(){
         var dt = new Date( (new Date()).getTime() - 5000);  //update time is 5 seconds ago
         var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
-        const missed = invalid({ts}, {time});
+        const missed = invalid({time}, {ts});
         assert.ok( !missed);
     })
 
@@ -154,7 +154,7 @@ describe('validator:once-a-day', function(){
         var dt = new Date( (new Date()).getTime() - 5000);  //update time is 5 seconds ago
         var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
 
-        const missed = invalid({ts}, {time});
+        const missed = invalid({time}, {ts});
         assert.ok( !missed);
     })
 

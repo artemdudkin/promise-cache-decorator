@@ -1,6 +1,6 @@
 const assert = require("assert");
 const sinon = require("sinon");
-var deferred = require("delay-promise-func");
+var delayed = require("delay-promise-func");
 const cache = require("../index");
 
 var p = (data) => {
@@ -28,23 +28,41 @@ describe('storage', function(){
     it('should hit after cache load', ()=>{
         cache.setSettings({storage:{
             load : (id) => {
-                return deferred(()=>{
+                return delayed(()=>{
                     let value;
                     if (id === '123:'+JSON.stringify([{a:1, b:2}])) {
-                        value = JSON.stringify({value:{a:11, b:22, sum:33}, ts:Date.now()})
+                        value = JSON.stringify({value:{a:11, b:22, sum:55}, ts:Date.now()})
                     }
                     return Promise.resolve(value);
-                }, 1000)();
+                }, 500)();
             },
             save : () => { return Promise.resolve()},
             remove : () => {   return Promise.resolve()},
         }});
 
         var pp = cache({type:"forever", id:"123"})(p);
-        
+
+        var start = Date.now();
+
         return pp({a:1,b:2})
         .then(res=>{
-            assert.equal( 33, res.sum);
+            let delta = Date.now() - start;
+            assert.ok(delta > 400 && delta < 600, "delay should be 500ms of load while it is " + delta);
+
+            assert.equal( 55, res.sum);
+            assert.equal( 11, res.a);
+            assert.equal( 22, res.b);
+        })
+        .then(res=>{
+            start = Date.now();
+            return pp({a:1,b:2});
+        })
+        .then(res=>{
+            //it will remains at cache after load
+            let delta = Date.now() - start;
+            assert.ok(delta < 100, "chache hit should cause 0ms delay while it is " + delta);
+
+            assert.equal( 55, res.sum);
             assert.equal( 11, res.a);
             assert.equal( 22, res.b);
         })
