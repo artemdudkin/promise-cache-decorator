@@ -1,6 +1,7 @@
 tests for storage which methods returns not Promise (esp. load)
 tests for non-global storage etc.
 lru cache invalidator
+add dispose() for item @ cache.remove()
 
 fix *.d.ts ("any" type for all)
 clear() cannot clean all storages
