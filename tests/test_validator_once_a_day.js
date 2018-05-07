@@ -136,6 +136,14 @@ describe('validator:once-a-day', function(){
         assert.ok( missed);
     })
 
+    it('once-a-day invalid() @ item == undefined', ()=> {
+        var dt = new Date( (new Date()).getTime() + 3000);  //update time is in 3 seconds
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+
+        const missed = invalid({time}, undefined);
+        assert.ok( missed);
+    })
+
     it('once-a-day invalid() @ item.ts before updateTime & current time after updateTime', ()=> {
         var ts = Date.now() - 5000; // item.ts is 5 seconds ago
 

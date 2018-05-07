@@ -53,6 +53,11 @@ describe('validator:age', function(){
         assert.ok( missed);
     })
 
+    it('invalid() @ item == undefined', ()=> {
+        const missed = invalid({maxAge:5000}, undefined);
+        assert.ok( missed);
+    })
+
     it('invalid() @ item.ts + maxAge is less then current time', ()=> {
         var ts = Date.now() - 3000; // item.ts is 3 seconds ago
 
