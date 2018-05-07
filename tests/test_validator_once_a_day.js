@@ -116,7 +116,7 @@ describe('validator:once-a-day', function(){
         var expected = new Date();
         expected.setHours(0, 0, 0, 0);
         assert.equal( expected.getTime(), actial.getTime());
-    })
+    })    
 
     it('once-a-day NOT invalid() @ item.ts before updateTime & current time before updateTime', ()=> {
         var ts = Date.now() - 3000; // item.ts is 3 seconds ago
@@ -126,6 +126,14 @@ describe('validator:once-a-day', function(){
 
         const missed = invalid({time}, {ts});
         assert.ok( !missed);
+    })
+
+    it('once-a-day invalid() @ item.ts == undefined', ()=> {
+        var dt = new Date( (new Date()).getTime() + 3000);  //update time is in 3 seconds
+        var time = dt.getHours() + ":" + dt.getMinutes() + ":" + dt.getSeconds();
+
+        const missed = invalid({time}, {});
+        assert.ok( missed);
     })
 
     it('once-a-day invalid() @ item.ts before updateTime & current time after updateTime', ()=> {

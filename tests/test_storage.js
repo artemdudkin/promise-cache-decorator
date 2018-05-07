@@ -23,6 +23,7 @@ describe('storage', function(){
         cache.restoreDefaultSettings();
         cache.clear();
         if (console.error.isSinonProxy) console.error.restore();
+        if (console.warn.isSinonProxy) console.warn.restore();
     })
 
     it('should hit after cache load', ()=>{
@@ -157,7 +158,7 @@ describe('storage', function(){
         var _removed_id;
         var _saved_id;
         cache.setSettings({storage:{
-            load : (id) => {return Promise.resolve()},
+            load : (id) => Promise.resolve(),
             save : (id) => {
                 _saved_id = id;
                 return Promise.resolve()
@@ -199,9 +200,9 @@ describe('storage', function(){
         sinon.spy(console, "error");
 
         cache.setSettings({storage:{
-            save : ()=>{return Promise.resolve()},
-            load : () => {return Promise.resolve("{123")},
-            remove : () => {return Promise.resolve()},
+            save : () => Promise.resolve(),
+            load : () => Promise.resolve("{123"),
+            remove : () => Promise.resolve(),
         }});
 
         var pp = cache({type:"forever"})(p);
@@ -218,9 +219,9 @@ describe('storage', function(){
         sinon.spy(console, "error");
 
         cache.setSettings({storage:{
-            save : ()=>{return Promise.resolve()},
-            load : (id) => {return Promise.reject("err")},
-            remove : () => {return Promise.resolve()},
+            save : () => Promise.resolve(),
+            load : (id) => Promise.reject("err"),
+            remove : () => Promise.resolve(),
         }});
 
         var _fired = false;
@@ -243,9 +244,9 @@ describe('storage', function(){
         sinon.spy(console, "error");
 
         cache.setSettings({storage:{
-            save : ()=>{return Promise.reject("err")},
-            load : (id) => {return Promise.resolve()},
-            remove : () => {return Promise.resolve()},
+            save : () => Promise.reject("err"),
+            load : (id) => Promise.resolve(),
+            remove : () => Promise.resolve(),
         }});
 
         var _fired = false;
@@ -274,9 +275,9 @@ describe('storage', function(){
         sinon.spy(console, "error");
 
         cache.setSettings({storage:{
-            save : ()=>{return Promise.resolve()},
-            load : (id) => {return Promise.resolve()},
-            remove : () => {return Promise.reject("err")},
+            save : ()=>Promise.resolve(),
+            load : (id) => Promise.resolve(),
+            remove : () => Promise.reject("err"),
         }});
 
         var _fired = false;
@@ -304,5 +305,75 @@ describe('storage', function(){
             assert.equal(8, res);
         })
     })    
-    
+
+    it('should load if storage.load is not Promise', ()=>{
+        let fired = false;
+        cache.setSettings({storage:{
+            load : (id) => {fired=true; return JSON.stringify({value:id, ts:Date.now()})},
+            //load : (id) => {fired=true},
+            save : () => Promise.resolve(),
+            remove : () => Promise.resolve(),
+        }});
+
+        var pp = cache({id:"1"})(p);
+
+        return pp({a:"a",b:"b"})
+        .then(res=>{
+            assert.ok(fired);
+            assert.equal('1:[{"a":"a","b":"b"}]', res);
+        })
+    })    
+
+    it('should work if storage.save is not Promise', ()=>{
+        sinon.spy(console, "error");
+        sinon.spy(console, "warn");
+
+        let fired = false;
+        cache.setSettings({storage:{
+            load : (id) => Promise.resolve(),
+            save : () => {fired=true;},
+            remove : () => Promise.resolve(),
+        }});
+
+        var pp = cache({id:"1"})(p);
+
+        return pp({a:"a",b:"b"})
+        .then(res=>{
+            assert.ok(fired);
+            assert.equal( 0, console.error.callCount);
+            assert.equal( 0, console.warn.callCount);
+        })
+    })    
+
+
+    it('should work if storage.remove is not Promise', ()=>{
+        sinon.spy(console, "error");
+        sinon.spy(console, "warn");
+
+        let fired = false;
+        cache.setSettings({storage:{
+            load : (id) => Promise.resolve(),
+            save : () => Promise.resolve(),
+            remove : () => {fired=true;},
+        }});
+
+        var pp = cache({type:"age", maxAge:500})(p);
+
+        return pp({a:234})
+        .then(res=>{
+            assert.ok(!fired);
+            assert.equal( 0, console.error.callCount);
+            assert.equal( 0, console.warn.callCount);
+        })
+        .then(res=>{
+            fired = false;
+            return delayed(pp, 600)({a:234});
+        })
+        .then(res=>{
+            assert.ok(fired);
+            assert.equal( 0, console.error.callCount);
+            assert.equal( 0, console.warn.callCount);
+        })
+    })    
+
 })
