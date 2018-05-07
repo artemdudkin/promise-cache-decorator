@@ -7,6 +7,7 @@ fix *.d.ts ("any" type for all)
 clear() cannot clean all storages
 
 ? add settings: hasher for keys and serializer for values
+? tests for d.ts
 
 ? test bluebird, q, etc.
 ? run Fibonacci test from memoizee
