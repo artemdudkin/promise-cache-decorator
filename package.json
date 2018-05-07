@@ -2,7 +2,7 @@
   "author": "Artem Dudkin <sheeva@list.ru>",
   "name": "promise-cache-decorator",
   "license": "MIT",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "repository": {
     "type": "git",
     "url": "git@github.com:artemdudkin/promise-cache-decorator.git"
@@ -29,6 +29,7 @@
   },
   "dependencies": {
     "circular-json": "^0.5.3",
+    "clone": "^2.1.1",
     "promisify-func": "0.0.3"
   },
   "keywords": [
