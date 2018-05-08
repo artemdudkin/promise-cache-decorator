@@ -309,8 +309,11 @@ describe('storage', function(){
     it('should load if storage.load is not Promise', ()=>{
         let fired = false;
         cache.setSettings({storage:{
-            load : (id) => {fired=true; return JSON.stringify({value:id, ts:Date.now()})},
-            //load : (id) => {fired=true},
+            load : (id) => {
+                fired=true; 
+                const value = JSON.parse(id.substring(id.indexOf(":")+1))[0];// '1:[{"a":"a","b":"b"}]' -> {a:"a", b:"b"}
+                return JSON.stringify({value, ts:Date.now()})
+            },
             save : () => Promise.resolve(),
             remove : () => Promise.resolve(),
         }});
@@ -320,7 +323,7 @@ describe('storage', function(){
         return pp({a:"a",b:"b"})
         .then(res=>{
             assert.ok(fired);
-            assert.equal('1:[{"a":"a","b":"b"}]', res);
+            assert.deepEqual({a:"a",b:"b"}, res);
         })
     })    
 
@@ -375,5 +378,40 @@ describe('storage', function(){
             assert.equal( 0, console.warn.callCount);
         })
     })    
+
+    it('should work if storage.load returns null', ()=>{
+        let fired = false;
+        cache.setSettings({storage:{
+            load : (id) => {fired=true; return null},
+            save : () => Promise.resolve(),
+            remove : () => Promise.resolve(),
+        }});
+
+        var pp = cache({type:"age", id:"1"})(p);
+
+        return pp({a:"a",b:"b"})
+        .then(res=>{
+            assert.ok(fired);
+            assert.deepEqual({"a":"a", "b":"b", "sum":"ab"}, res);
+        })
+    })
+
+
+    it('should work if storage.load returns undefined', ()=>{
+        let fired = false;
+        cache.setSettings({storage:{
+            load : (id) => {fired=true;},
+            save : () => Promise.resolve(),
+            remove : () => Promise.resolve(),
+        }});
+
+        var pp = cache({type:"age", id:"1"})(p);
+
+        return pp({a:"a",b:"b"})
+        .then(res=>{
+            assert.ok(fired);
+            assert.deepEqual({"a":"a", "b":"b", "sum":"ab"}, res);
+        })
+    })
 
 })

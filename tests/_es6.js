@@ -1,6 +1,6 @@
 import assert from "assert";
 const sinon = require("./_es6_sinon");
-import cache from "../index";
+import * as cache from "../index";
 
 var loader_called = false;
 
