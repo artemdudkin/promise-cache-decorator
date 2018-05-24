@@ -7,9 +7,9 @@
     "prod": "webpack --config webpack.config.prod.js"
   },
   "devDependencies": {
-    "@babel/preset-env": "^7.0.0-beta.46",
+    "@babel/preset-env": "^7.0.0-beta.47",
     "autobind-decorator": "^2.1.0",
-    "autoprefixer": "^8.3.0",
+    "autoprefixer": "^8.5.0",
     "babel-core": "^6.26.0",
     "babel-loader": "^7.1.4",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -19,7 +19,7 @@
     "babel-plugin-transform-object-assign": "^6.8.0",
     "babel-plugin-transform-object-rest-spread": "^6.22.0",
     "babel-plugin-transform-proto-to-assign": "^6.22.0",
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.16.0",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
@@ -35,8 +35,8 @@
     "delay-promise-func": "0.0.6",
     "lodash.get": "^4.4.2",
     "promise-cache-decorator": "^0.3.8",
-    "react": "^16.3.2",
-    "react-dom": "^16.3.2",
+    "react": "^16.4.0",
+    "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
     "redux-thunk": "^2.2.0"
