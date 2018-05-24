@@ -1,4 +1,5 @@
 async/await?
+active caching?
 tests for non-global storage etc.
 lru cache invalidator
 add dispose() for item @ cache.remove()
