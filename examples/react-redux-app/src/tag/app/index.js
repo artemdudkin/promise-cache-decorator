@@ -3,8 +3,6 @@ import { connect } from 'react-redux';
 import autobind from 'autobind-decorator';
 import get from 'lodash.get';
 
-import { injectAsyncReducer } from '../../store';
-
 import {
 	load,
 } from './_actions';
@@ -63,7 +61,5 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = {
 	load,
 }
-
-injectAsyncReducer('app', require('./_reducer').default);
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

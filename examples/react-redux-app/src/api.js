@@ -9,6 +9,8 @@ const getWeather = (town, country) => {
         })
 }
 
+
 export default {
+    // additional 3 seconds delay
     getWeather : delayed(getWeather, 3000)
 }

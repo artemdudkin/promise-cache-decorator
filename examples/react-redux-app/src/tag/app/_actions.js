@@ -30,9 +30,9 @@ export const load = (town, country) => (dispatch, getState) => {
 */
 
   cache({
+    id:"weather",    
     type:"age",
     maxAge:20000,
-    id:"weather",
     tardy : () => {dispatch({type:FORECAST_LOCK})},
     tardy_timeout : 200
   })(_getWeather)(town, country)
