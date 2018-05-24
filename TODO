@@ -1,3 +1,5 @@
+add API at readme
+
 async/await?
 active caching?
 tests for non-global storage etc.
