@@ -4,7 +4,29 @@ Two-level cache for functions returning promise (i.e. it memoizes promises), wit
 
 [![Coverage Status](https://coveralls.io/repos/github/artemdudkin/promise-cache-decorator/badge.svg?branch=master)](https://coveralls.io/github/artemdudkin/promise-cache-decorator?branch=master) [![Build Status](https://api.travis-ci.org/artemdudkin/promise-cache-decorator.svg?branch=master)](https://api.travis-ci.org/artemdudkin/promise-cache-decorator.svg?branch=master)
 
-## Example (and loader)
+## ES6 notation
+```js
+import * as cache from 'promise-cache-decorator';
+import axios from 'axios';
+
+class API {
+
+    @cache({
+      type:"once-a-day",
+      time:"14:00",
+      tardy:"loader" //will call this.loader() if requests lasts more then 1 second
+    })
+    getMoscowWeather(){
+      return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
+    }
+    
+    loader(){
+      console.log("loading...");
+    }
+}
+```
+
+## More Examples (ES5)
 
 ```js
 const cache = require('promise-cache-decorator');
@@ -34,28 +56,6 @@ cached_by_5_mins_showing_loader_on_slow_requests('http://apidev.accuweather.com/
 .catch(err => {
   show_the_error(err);
 })
-```
-
-## ES6 notation
-```js
-import * as cache from 'promise-cache-decorator';
-import axios from 'axios';
-
-class API {
-
-    @cache({
-      type:"once-a-day",
-      time:"14:00",
-      tardy:"loader" //will call this.loader()
-    })
-    getMoscowWeather(){
-      return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
-    }
-    
-    loader(){
-      console.log("loading...");
-    }
-}
 ```
 
 
