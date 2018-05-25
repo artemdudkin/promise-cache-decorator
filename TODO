@@ -1,4 +1,3 @@
-check all typeof == undefined occurencies and add null check
 add API at readme
 
 async/await?
