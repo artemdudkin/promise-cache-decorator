@@ -14,7 +14,7 @@ class API {
     @cache({
       type:"once-a-day",
       time:"14:00",
-      tardy:"loader" //will call this.loader() if requests lasts more then 1 second
+      tardy:"loader" //will call this.loader() if request lasts more then 1 second
     })
     getMoscowWeather(){
       return axios.get('http://apidev.accuweather.com/locations/v1/search?q=Moscow,%20RU&apikey=hoArfRosT1215');
