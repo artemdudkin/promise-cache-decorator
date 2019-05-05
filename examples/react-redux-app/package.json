@@ -4,7 +4,9 @@
   "license": "MIT",
   "scripts": {
     "dev": "webpack --watch --progress",
-    "prod": "webpack --config webpack.config.prod.js"
+    "prod": "webpack --config webpack.config.prod.js",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.0.0-beta.49",
@@ -39,6 +41,8 @@
     "react-dom": "^16.4.0",
     "react-redux": "^5.0.7",
     "redux": "^4.0.0",
-    "redux-thunk": "^2.2.0"
-  }
+    "redux-thunk": "^2.2.0",
+    "snyk": "^1.161.1"
+  },
+  "snyk": true
 }
